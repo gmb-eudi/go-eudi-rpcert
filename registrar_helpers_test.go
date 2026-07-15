@@ -15,7 +15,7 @@ import (
 )
 
 // signRegistrarJWS produces a compact ES256 JWS over payload with kid in the
-// protected header (TS5 v1.3 §3.2.2: "signed according to IETF 7515").
+// protected header (ARF TS5 v1.3 §3.2.2: "signed according to IETF 7515").
 func signRegistrarJWS(t testing.TB, payload []byte, key *ecdsa.PrivateKey, kid string) string {
 	t.Helper()
 	return string(signCompactJWS(t, map[string]any{"alg": "ES256", "kid": kid, "typ": "JWT"}, payload, key))

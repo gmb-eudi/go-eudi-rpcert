@@ -1,4 +1,4 @@
-// Package ts5 models the EC TS5 v1.3 "Common formats and API for Relying
+// Package ts5 models the ARF TS5 v1.3 "Common formats and API for Relying
 // Party Registration information" data model (§2) and the JWS payload
 // envelopes of its Registrar API (Annex A OpenAPI). Structs mirror the JSON
 // schema ts5-json-common-rp-data-model.json field-for-field; the

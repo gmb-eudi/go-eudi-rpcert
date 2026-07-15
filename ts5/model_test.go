@@ -233,7 +233,7 @@ func jsonNorm(t *testing.T, b []byte) any {
 // Schema-drift test (T-07.1 acceptance): (a) strict decode — a fixture field
 // our structs do not model fails the build's tests, i.e. spec drift is
 // caught here, not in production; (b) re-marshal equality — a struct field
-// that renames/retypes a TS5 v1.3 attribute is caught by tree comparison.
+// that renames/retypes an ARF TS5 v1.3 attribute is caught by tree comparison.
 func TestSchemaDrift(t *testing.T) {
 	for _, name := range []string{"wrp-page1.json", "wrp-page2.json"} {
 		t.Run(name, func(t *testing.T) {
@@ -266,7 +266,7 @@ func TestEnvelopeValidation(t *testing.T) {
 		{"missing_data", `{"iss":"x","iat":1}`, ts5.ErrEnvelope},
 		{"not_json", `<html>`, ts5.ErrDecode},
 		{"empty", ``, ts5.ErrDecode},
-		// TS5 §3.2.1: responses exclude WalletRelyingParty.physicalAddress;
+		// ARF TS5 §3.2.1: responses exclude WalletRelyingParty.physicalAddress;
 		// the JSON schema names the LegalEntity field postalAddress — both
 		// spellings are privacy-rejected before any struct field could hold them.
 		{"physicalAddress_present", `{"iss":"x","iat":1,"data":[{"physicalAddress":["street 1"],"isPSB":false,"isIntermediary":false}]}`, ts5.ErrAddressPresent},

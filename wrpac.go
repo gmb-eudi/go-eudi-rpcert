@@ -26,7 +26,7 @@ var wrpacPolicyOIDs = []x509.OID{
 const entitlementArcPrefix = "0.4.0.19475.1."
 
 // Entitlement URIs — ETSI TS 119 475 V1.2.1 Annex A.2 (exhaustive; also the
-// vocabulary of TS5 v1.3 `entitlements`).
+// vocabulary of ARF TS5 v1.3 `entitlements`).
 const (
 	EntitlementServiceProvider           = "https://uri.etsi.org/19475/Entitlement/Service_Provider"
 	EntitlementQEAAProvider              = "https://uri.etsi.org/19475/Entitlement/QEAA_Provider"
@@ -67,7 +67,7 @@ var knownEntitlementURIs = func() map[string]bool {
 }()
 
 // intermediaryEntitlementURIs is intentionally EMPTY: TS 119 475 Annex A.2
-// defines no intermediary entitlement and TS5 v1.3 §2.1 (Note) makes
+// defines no intermediary entitlement and ARF TS5 v1.3 §2.1 (Note) makes
 // isIntermediary available only via the Registrar API. When a national or
 // EU profile defines one, add it here; until then IsIntermediaryCapable is
 // always false and RegistrarClient.VerifyIntermediaryLinkage (T-07.9) is

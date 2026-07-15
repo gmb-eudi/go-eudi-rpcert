@@ -10,10 +10,10 @@ Regulatory identity for EUDI Wallet relying parties:
   TS 119 475 V1.2.1 §5.2: issuer signature via WRPRCIssuer anchors, validity
   window (exp ≤ iat + 12 months), Annex A.2 entitlements, registered
   credential/claim extraction for scope checks.
-- **RegistrationRef** — the RPRC_19a registration reference (client name,
+- **RegistrationRef** — the ARF RPRC_19a registration reference (client name,
   unique ID, registry URI, intended-use identifier) always embedded in
   authorization requests.
-- **ts5** — data model + typed client for the TS5 v1.3 Registrar API
+- **ts5** — data model + typed client for the ARF TS5 v1.3 Registrar API
   (`GET /wrp`, `GET /wrp/{identifier}`, `GET /wrp/check-intended-use`),
   JWS-signed responses, cursor pagination, per-registry key pinning.
 
@@ -42,10 +42,10 @@ modules once they are). Functionally, WP-07 is complete (T-07.1–T-07.9):
   `ParseWRPRC`/`Verify` matrix with hardened CBOR decoding and the COSE
   `typ` label 16 carried as the full media type `application/rc-wrp+cwt`
   (T-07.5).
-- `RegistrationRef` builder/serializer for the RPRC_19a registration
+- `RegistrationRef` builder/serializer for the ARF RPRC_19a registration
   reference, always embedded in built requests (T-07.6, pulled forward for
   WP-08).
-- `RegistrarClient.GetWRP`/`GetWRPByID`: TS5 v1.3 `GET /wrp` +
+- `RegistrarClient.GetWRP`/`GetWRPByID`: ARF TS5 v1.3 `GET /wrp` +
   `GET /wrp/{identifier}`, cursor-paginated, JWS-signed-response verified
   (per-registry key pinning, `Provenance` in the report), physicalAddress/
   postalAddress rejected before it can enter a struct (T-07.7).
@@ -54,7 +54,7 @@ modules once they are). Functionally, WP-07 is complete (T-07.1–T-07.9):
   `err:registrar:intended-use-revoked` (T-07.8).
 - `RegistrarClient.VerifyIntermediaryLinkage`: confirms via the Registrar API
   that a client's `usesIntermediary` lists the operator by identifier — the
-  only way to check this (TS5 v1.3 §2.1 Note; not present in any certificate)
+  only way to check this (ARF TS5 v1.3 §2.1 Note; not present in any certificate)
   — superseding `WRPAC.IsIntermediaryCapable` as the authoritative check
   (T-07.9).
 

@@ -86,7 +86,7 @@ func TestCheckIntendedUse(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("CheckIntendedUse = %v, want %v", got, tt.want)
 			}
-			// TS5 OpenAPI: rpidentifier is required; the five optional
+			// ARF TS5 OpenAPI: rpidentifier is required; the five optional
 			// params carry their exact names.
 			for k, want := range map[string]string{
 				"rpidentifier":          "NTRDE-HRB123456",

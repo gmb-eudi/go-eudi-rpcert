@@ -188,7 +188,7 @@ func TestLoadWRPACEntitlementExtraction(t *testing.T) {
 }
 
 // Decision 2: no intermediary entitlement exists at EU level (TS 119 475
-// Annex A.2 has none; TS5 §2.1 Note: isIntermediary is API-only). Even a
+// Annex A.2 has none; ARF TS5 §2.1 Note: isIntermediary is API-only). Even a
 // WRPAC carrying every Annex A.2 entitlement is NOT intermediary-capable;
 // the authoritative check is T-07.9's registrar linkage.
 func TestLoadWRPACIntermediaryCapabilityIsAPIOnly(t *testing.T) {

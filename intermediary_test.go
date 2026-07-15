@@ -43,7 +43,7 @@ func linkageClient(t *testing.T, urlStr string, key *ecdsa.PrivateKey) *rpcert.R
 }
 
 // T-07.9 acceptance: linked / unlinked / stale fixtures. Linkage is only
-// verifiable via the API (TS5 v1.3 §2.1 Note — isIntermediary/
+// verifiable via the API (ARF TS5 v1.3 §2.1 Note — isIntermediary/
 // usesIntermediary are not in certificates).
 func TestVerifyIntermediaryLinkage(t *testing.T) {
 	key := genP256(t)

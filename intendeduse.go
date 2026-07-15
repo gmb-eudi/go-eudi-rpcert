@@ -9,11 +9,11 @@ import (
 	"github.com/gmb-eudi/go-eudi-rpcert/ts5"
 )
 
-// dateLayout — ETSI TS 119 475 / TS5 IntendedUse createdAt/revokedAt use
+// dateLayout — ETSI TS 119 475 / ARF TS5 IntendedUse createdAt/revokedAt use
 // ISO 8601-1 YYYY-MM-DD.
 const dateLayout = "2006-01-02"
 
-// IntendedUseQuery mirrors GET /wrp/check-intended-use (TS5 v1.3 OpenAPI):
+// IntendedUseQuery mirrors GET /wrp/check-intended-use (ARF TS5 v1.3 OpenAPI):
 // rpidentifier is mandatory; the other five are optional narrowing filters.
 type IntendedUseQuery struct {
 	RPIdentifier          string // rpidentifier (required)
@@ -41,7 +41,7 @@ func (q IntendedUseQuery) values() url.Values {
 }
 
 // CheckIntendedUse calls GET /wrp/check-intended-use and returns the
-// JWS-signed boolean result (TS5 v1.3 §3.2.2: "JWS-signed boolean TRUE or
+// JWS-signed boolean result (ARF TS5 v1.3 §3.2.2: "JWS-signed boolean TRUE or
 // FALSE response, based on if the queried parameter set can be found in the
 // Registrar's Intended use information"). Verification reuses the same
 // fetch/verifyResponse wiring as GetWRP/GetWRPByID (T-07.7) — one trust
@@ -63,7 +63,7 @@ func (c *RegistrarClient) CheckIntendedUse(ctx context.Context, registryURI stri
 }
 
 // IntendedUseActive evaluates the intended-use lifecycle window
-// (ETSI TS 119 475 / TS5 IntendedUse): active iff createdAt <= at and
+// (ETSI TS 119 475 / ARF TS5 IntendedUse): active iff createdAt <= at and
 // (revokedAt absent OR at < revokedAt-day-midnight). Revocation is effective
 // from 00:00:00 UTC of revokedAt (WP-07 Decision 10 — fail-closed reading of
 // "end date for the validity"): the entire revokedAt calendar day already

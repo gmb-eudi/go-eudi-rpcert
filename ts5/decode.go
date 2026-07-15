@@ -6,9 +6,9 @@ import (
 	"fmt"
 )
 
-// addressKeys are rejected anywhere in a Registrar API payload: TS5 v1.3
+// addressKeys are rejected anywhere in a Registrar API payload: ARF TS5 v1.3
 // §3.2.1 excludes WalletRelyingParty.physicalAddress from responses (the
-// TS5 JSON schema spells the LegalEntity field postalAddress — reject both).
+// ARF TS5 JSON schema spells the LegalEntity field postalAddress — reject both).
 // Ingesting home/postal addresses would pull personal data into the
 // verifier pipeline (hard rule 3 hygiene) — fail closed.
 var addressKeys = map[string]bool{"physicalAddress": true, "postalAddress": true}
@@ -45,7 +45,7 @@ func walkForAddress(v any) error {
 }
 
 // DecodeSignedWRPArray decodes and validates the JWS payload of GET /wrp
-// (TS5 v1.3 §3.2.2, OpenAPI SignedWRPArray: iss, iat, data required).
+// (ARF TS5 v1.3 §3.2.2, OpenAPI SignedWRPArray: iss, iat, data required).
 // The payload must already be signature-verified by the caller.
 func DecodeSignedWRPArray(payload []byte) (*SignedWRPArray, error) {
 	if err := rejectAddressFields(payload); err != nil {
@@ -65,7 +65,7 @@ func DecodeSignedWRPArray(payload []byte) (*SignedWRPArray, error) {
 }
 
 // DecodeSignedWRP decodes the JWS payload of GET /wrp/{identifier}
-// (TS5 v1.3 §3.2.2, OpenAPI SignedWRP).
+// (ARF TS5 v1.3 §3.2.2, OpenAPI SignedWRP).
 func DecodeSignedWRP(payload []byte) (*SignedWRP, error) {
 	if err := rejectAddressFields(payload); err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func DecodeSignedWRP(payload []byte) (*SignedWRP, error) {
 }
 
 // DecodeSignedIntendedUseCheckResult decodes the JWS payload of
-// GET /wrp/check-intended-use (TS5 v1.3 §3.2.2, OpenAPI
+// GET /wrp/check-intended-use (ARF TS5 v1.3 §3.2.2, OpenAPI
 // SignedIntendedUseCheckResult).
 //
 // Runs rejectAddressFields for symmetry with DecodeSignedWRP/

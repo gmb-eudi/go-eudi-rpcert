@@ -18,7 +18,7 @@ const (
 	FormatCWT = "cwt"
 )
 
-// Credential format identifiers used in WRPRC/TS5 credential entries —
+// Credential format identifiers used in WRPRC/ARF TS5 credential entries —
 // OpenID4VP 1.0 Annex B format ids (data formats, not crypto algorithms;
 // hard rule 4 concerns algorithms only).
 const (
@@ -46,7 +46,7 @@ const (
 )
 
 // LangValue is a TS 119 475 §5.2.4 localized string ({lang, value} — note:
-// the WRPRC uses "value" where TS5's MultiLangString uses "content").
+// the WRPRC uses "value" where ARF TS5's MultiLangString uses "content").
 type LangValue struct {
 	Lang  string `json:"lang"`
 	Value string `json:"value"`
@@ -226,7 +226,7 @@ type statusJSON struct {
 }
 
 // credentialJSON — TS 119 475 Tables 8/9 use subfield "claim" (singular;
-// Annex C example confirms), unlike TS5's Credential.claims.
+// Annex C example confirms), unlike ARF TS5's Credential.claims.
 type credentialJSON struct {
 	Format string      `json:"format"`
 	Meta   metaJSON    `json:"meta"`

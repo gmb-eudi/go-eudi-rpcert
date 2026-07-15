@@ -39,7 +39,7 @@ var (
 	// RegistrationRef (ARF RPRC_19a / ADR-0003 decision 2)
 	ErrRegistrationRef = errors.New("rpcert: incomplete registration reference")
 
-	// TS5 Registrar API client
+	// ARF TS5 Registrar API client
 	ErrNoRegistrarKey       = errors.New("rpcert: no verification key configured for registry")
 	ErrResponseSignature    = errors.New("rpcert: registrar response JWS verification failed")
 	ErrStaleResponse        = errors.New("rpcert: registrar response too old")

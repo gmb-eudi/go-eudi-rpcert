@@ -7,10 +7,10 @@ import (
 	"strconv"
 )
 
-// WalletRelyingParty — TS5 v1.3 §2.1. Inherits the LegalEntity attributes
+// WalletRelyingParty — ARF TS5 v1.3 §2.1. Inherits the LegalEntity attributes
 // (§2.3: "WalletRelyingParty class inherits all attributes of this class").
 // physicalAddress/postalAddress deliberately has NO field: API responses
-// exclude it (TS5 §3.2.1) and the decoders reject it (ErrAddressPresent).
+// exclude it (ARF TS5 §3.2.1) and the decoders reject it (ErrAddressPresent).
 type WalletRelyingParty struct {
 	TradeName            string                `json:"tradeName,omitempty"`
 	SupportURI           []string              `json:"supportURI,omitempty"`
@@ -24,7 +24,7 @@ type WalletRelyingParty struct {
 	UsesIntermediary     []WalletRelyingParty  `json:"usesIntermediary,omitempty"`
 	IsIntermediary       bool                  `json:"isIntermediary"`
 
-	// LegalEntity attributes (TS5 §2.3 / TS 119 475 Annex B.2.2)
+	// LegalEntity attributes (ARF TS5 §2.3 / TS 119 475 Annex B.2.2)
 	LegalPerson   *LegalPerson   `json:"legalPerson,omitempty"`
 	NaturalPerson *NaturalPerson `json:"naturalPerson,omitempty"`
 	Identifiers   []Identifier   `json:"identifier,omitempty"`
@@ -34,7 +34,7 @@ type WalletRelyingParty struct {
 	InfoURI       []string       `json:"infoURI,omitempty"`
 }
 
-// IntendedUse — TS5 v1.3 §2.4.3.
+// IntendedUse — ARF TS5 v1.3 §2.4.3.
 type IntendedUse struct {
 	Purpose               []MultiLangString `json:"purpose"`
 	PrivacyPolicy         []Policy          `json:"privacyPolicy"`
@@ -44,7 +44,7 @@ type IntendedUse struct {
 	Credentials           []Credential      `json:"credentials"`
 }
 
-// Credential — TS5 v1.3 §2.4.4. Meta is the OID4VP §6.1 per-format object
+// Credential — ARF TS5 v1.3 §2.4.4. Meta is the OID4VP §6.1 per-format object
 // (e.g. {"vct_values": [...]} for dc+sd-jwt, {"doctype_value": "..."} for
 // mso_mdoc).
 type Credential struct {
@@ -53,7 +53,7 @@ type Credential struct {
 	Claims []Claim         `json:"claims,omitempty"`
 }
 
-// Claim — TS5 v1.3 §2.4.1.
+// Claim — ARF TS5 v1.3 §2.4.1.
 type Claim struct {
 	Path ClaimPath `json:"path"`
 }
@@ -95,13 +95,13 @@ func (p *ClaimPath) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// MultiLangString — TS5 v1.3 §2.4.5.
+// MultiLangString — ARF TS5 v1.3 §2.4.5.
 type MultiLangString struct {
 	Lang    string `json:"lang"`
 	Content string `json:"content"`
 }
 
-// SupervisoryAuthority — TS5 v1.3 §2.4.6.
+// SupervisoryAuthority — ARF TS5 v1.3 §2.4.6.
 type SupervisoryAuthority struct {
 	Name    string   `json:"name,omitempty"`
 	Country string   `json:"country,omitempty"`
@@ -110,20 +110,20 @@ type SupervisoryAuthority struct {
 	FormURI []string `json:"formURI,omitempty"`
 }
 
-// ProvidedAttestation — TS5 v1.3 §2.4.7.
+// ProvidedAttestation — ARF TS5 v1.3 §2.4.7.
 type ProvidedAttestation struct {
 	Format string          `json:"format"`
 	Meta   json.RawMessage `json:"meta,omitempty"`
 }
 
-// Identifier — TS 119 475 Annex B.2.5 (referenced by TS5 §2.4.2). Type is
+// Identifier — TS 119 475 Annex B.2.5 (referenced by ARF TS5 §2.4.2). Type is
 // one of the http://data.europa.eu/eudi/id/* URIs (or a national extension).
 type Identifier struct {
 	Type       string `json:"type"`
 	Identifier string `json:"identifier"`
 }
 
-// Policy — TS 119 475 Annex B.2.8 (referenced by TS5 §2.4.8).
+// Policy — TS 119 475 Annex B.2.8 (referenced by ARF TS5 §2.4.8).
 type Policy struct {
 	Type      string `json:"type"`
 	PolicyURI string `json:"policyURI"`

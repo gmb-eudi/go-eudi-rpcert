@@ -22,7 +22,7 @@ import (
 const (
 	defaultMaxResponseAge = 24 * time.Hour
 	defaultMaxPages       = 100
-	defaultLimit          = 20 // TS5 OpenAPI default
+	defaultLimit          = 20 // ARF TS5 OpenAPI default
 )
 
 // Provenance is attached to the verification report so an operator can see
@@ -32,7 +32,7 @@ type Provenance struct {
 	KeyProvenance KeyProvenance
 }
 
-// RegistrarClient is a typed TS5 v1.3 Registrar API client with JWS
+// RegistrarClient is a typed ARF TS5 v1.3 Registrar API client with JWS
 // response verification. Framework-free: injected Doer + clock (ADR-0004).
 type RegistrarClient struct {
 	doer           Doer
@@ -106,7 +106,7 @@ func (c *RegistrarClient) setProvenance(p Provenance) {
 	c.mu.Unlock()
 }
 
-// WRPQuery mirrors the GET /wrp query parameters (TS5 v1.3 OpenAPI). Empty
+// WRPQuery mirrors the GET /wrp query parameters (ARF TS5 v1.3 OpenAPI). Empty
 // fields are omitted; IsIntermediary is a *bool so "unset" ≠ "false".
 type WRPQuery struct {
 	Identifier            string
@@ -147,7 +147,7 @@ func (q WRPQuery) values() url.Values {
 	return v
 }
 
-// GetWRP queries GET /wrp and joins all cursor pages (TS5 v1.3 §3.2.2).
+// GetWRP queries GET /wrp and joins all cursor pages (ARF TS5 v1.3 §3.2.2).
 func (c *RegistrarClient) GetWRP(ctx context.Context, registryURI string, q WRPQuery) ([]ts5.WalletRelyingParty, error) {
 	base := q.values()
 	var all []ts5.WalletRelyingParty
@@ -186,7 +186,7 @@ func (c *RegistrarClient) GetWRP(ctx context.Context, registryURI string, q WRPQ
 	return all, nil
 }
 
-// GetWRPByID queries GET /wrp/{identifier} (TS5 v1.3 §3.2.2).
+// GetWRPByID queries GET /wrp/{identifier} (ARF TS5 v1.3 §3.2.2).
 func (c *RegistrarClient) GetWRPByID(ctx context.Context, registryURI, identifier string) (*ts5.WalletRelyingParty, error) {
 	if identifier == "" {
 		return nil, fmt.Errorf("%w: empty identifier", ErrMalformed)
@@ -259,7 +259,7 @@ func (c *RegistrarClient) verifyResponse(registryURI string, token []byte) ([]by
 }
 
 // checkFreshness enforces the response-age window against the payload iat
-// (WP-07 Decision 7). All TS5 envelopes carry iat.
+// (WP-07 Decision 7). All ARF TS5 envelopes carry iat.
 func (c *RegistrarClient) checkFreshness(payload []byte) error {
 	var env struct {
 		Iat int64 `json:"iat"`

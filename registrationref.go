@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-// RegistrationRef is the RPRC_19a registration reference embedded in EVERY
+// RegistrationRef is the ARF RPRC_19a registration reference embedded in EVERY
 // authorization request (ADR-0003 decision 2) — with or without an attached
 // WRPRC — so wallets can query the registrar themselves: the client's
 // display name, its registered unique identifier, the national registry
@@ -102,7 +102,7 @@ func (r *RegistrationRef) UnmarshalJSON(data []byte) error {
 }
 
 // Claims returns the reference as request-object claim values for WP-08's
-// request builder (RPRC_19a extension).
+// request builder (ARF RPRC_19a extension).
 func (r RegistrationRef) Claims() (map[string]any, error) {
 	if err := r.Validate(); err != nil {
 		return nil, err

@@ -53,7 +53,7 @@ func TestGetWRPJoinsPages(t *testing.T) {
 	}
 }
 
-// Every query parameter is mapped with its exact TS5 lowercase name.
+// Every query parameter is mapped with its exact ARF TS5 lowercase name.
 func TestGetWRPQueryParamMapping(t *testing.T) {
 	key := genP256(t)
 	rs := newRegistrarServer(t, key)
