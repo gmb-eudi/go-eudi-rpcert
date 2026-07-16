@@ -3,7 +3,7 @@ package ts5
 import "errors"
 
 // Sentinel errors. Services map these to err:registrar:* problem codes
-// (docs/conventions.md); this library carries no HTTP semantics (ADR-0004).
+// this library carries no HTTP semantics (framework-free).
 var (
 	ErrDecode         = errors.New("ts5: payload is not valid JSON")
 	ErrEnvelope       = errors.New("ts5: signed payload envelope missing required field")

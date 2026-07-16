@@ -15,7 +15,7 @@ import (
 )
 
 // signRegistrarJWS produces a compact ES256 JWS over payload with kid in the
-// protected header (ARF TS5 v1.3 §3.2.2: "signed according to IETF 7515").
+// protected header ([ARF TS5 v1.3 §3.2.2]: "signed according to IETF 7515").
 func signRegistrarJWS(t testing.TB, payload []byte, key *ecdsa.PrivateKey, kid string) string {
 	t.Helper()
 	return string(signCompactJWS(t, map[string]any{"alg": "ES256", "kid": kid, "typ": "JWT"}, payload, key))
@@ -101,7 +101,7 @@ func flipLastByte(token string) string {
 }
 
 // pinnedKeysFor builds a RegistrarKeys pinning the server's public key to
-// the server URL (per-registry key pinning — WP-07 Decision 8).
+// the server URL (per-registry key pinning).
 func pinnedKeysFor(rs *registrarServer) crypto.PublicKey { return rs.key.Public() }
 
 // jsonPayload marshals v for ad-hoc fixtures.

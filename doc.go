@@ -5,7 +5,7 @@
 // registration reference embedded in every authorization request, and a
 // typed client for the ARF TS5 v1.3 Registrar API (CIR (EU) 2025/848).
 //
-// Dual path per ADR-0003: validate + attach WRPRCs where a Member State
+// Dual path: validate + attach WRPRCs where a Member State
 // issues them; always embed the RegistrationRef; consume the Registrar API
 // directly for onboarding verification, intended-use lifecycle monitoring
 // and intermediary-linkage checks.

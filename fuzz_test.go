@@ -8,14 +8,14 @@ import (
 	"github.com/gmb-eudi/go-eudi-rpcert/internal/testpki"
 )
 
-// Hard rule 5: ParseWRPRC consumes untrusted wallet-request attachments and
-// must never panic. Seeds: valid JWT (T-07.4), valid CWT (added T-07.5),
+// ParseWRPRC consumes untrusted wallet-request attachments and
+// must never panic. Seeds: valid JWT, valid CWT,
 // malformed skeletons.
 func FuzzParseWRPRC(f *testing.F) {
 	ca, leaf, key := wrprcSigner(f)
 	chain := []*x509.Certificate{leaf, ca.Cert}
 	f.Add(buildWRPRCJWT(f, chain, key, nil))
-	f.Add(buildWRPRCCWT(f, chain, key, nil))              // T-07.5: valid CWT corpus
+	f.Add(buildWRPRCCWT(f, chain, key, nil))              // valid CWT corpus
 	f.Add([]byte("eyJ0eXAiOiJyYy13cnAramd0In0.e30.AAAA")) // near-miss typ
 	f.Add([]byte("a.b.c"))
 	f.Add([]byte{0xd2, 0x84}) // truncated tagged COSE_Sign1
@@ -26,12 +26,12 @@ func FuzzParseWRPRC(f *testing.F) {
 	})
 }
 
-// Hard rule 5 / fix-wave item 2: LoadWRPAC's hasTelephoneOtherName does a
+// LoadWRPAC's hasTelephoneOtherName does a
 // hand-rolled asn1.Unmarshal walk over the raw SubjectAltName extension
 // bytes of an UNTRUSTED certificate chain (Go's x509 parser surfaces
 // URI/email/DNS/IP GeneralNames but drops otherName, so this package parses
-// the extension itself) — exactly the parser class hard rule 5 requires a
-// fuzz target for. Seeds cover the T-07.2 contact-SAN matrix (uri-only,
+// the extension itself) — exactly the untrusted-parser class that requires a
+// fuzz target for. Seeds cover the contact-SAN matrix (uri-only,
 // email-only, phone-otherName — the one that actually walks the SAN bytes,
 // and none-at-all) plus malformed near-miss byte skeletons; LoadWRPAC is
 // fuzzed end-to-end (not hasTelephoneOtherName directly) so the corpus

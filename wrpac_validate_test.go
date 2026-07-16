@@ -33,7 +33,7 @@ func loadDefaultWRPAC(t *testing.T, ca *testpki.CA) *rpcert.WRPAC {
 	return w
 }
 
-// T-07.3 acceptance: valid / expired / withdrawn-anchor cases.
+// Valid / expired / withdrawn-anchor cases.
 func TestValidateAgainst(t *testing.T) {
 	pinClock(t)
 	ca := testpki.NewCA(t, "TEST ACCESS CA DE")
@@ -46,7 +46,7 @@ func TestValidateAgainst(t *testing.T) {
 		}
 	})
 
-	// Production status form: WP-06 (go-eudi-trust) ships Anchor.Status
+	// Production status form: go-eudi-trust ships Anchor.Status
 	// VERBATIM as the full TS 119 612 service-status URI, not the bare
 	// "granted" token (confirmed against go-eudi-trust anchor.go/client.go and
 	// its testdata). The granted filter MUST accept it, otherwise the
@@ -69,12 +69,12 @@ func TestValidateAgainst(t *testing.T) {
 		}
 	})
 
-	// Fix-wave item 1: a zero ValidUntil must NOT be read as "never expires".
+	// A zero ValidUntil must NOT be read as "never expires".
 	// go-eudi-trust's own canonical filter (CachingSource.AnchorsFor,
 	// cache.go: "if !a.ValidUntil.After(now) { continue }") drops a
 	// zero-ValidUntil anchor — Anchor.ValidUntil is documented "REQUIRED
 	// upstream," so zero signals bad anchor data, not eternal validity.
-	// usableAnchors must match that fail-closed predicate (CLAUDE.md rule 7).
+	// usableAnchors must match that fail-closed predicate.
 	t.Run("zero_valid_until_fails_closed", func(t *testing.T) {
 		a := grantedAnchor(ca, trust.AccessCA, "DE")
 		a.ValidUntil = time.Time{} // zero value — must be treated as invalid, not eternal
@@ -101,7 +101,7 @@ func TestValidateAgainst(t *testing.T) {
 		}
 	})
 
-	// Territory fallback (WP-07 Decision 6): no DE anchors, EU-level ("")
+	// Territory fallback: no DE anchors, EU-level ("")
 	// anchors hold the chain.
 	t.Run("eu_level_fallback", func(t *testing.T) {
 		src := anchorsFor(trust.AccessCA, "", grantedAnchor(ca, trust.AccessCA, ""))
@@ -110,7 +110,7 @@ func TestValidateAgainst(t *testing.T) {
 		}
 	})
 
-	// Fail closed on source errors (CLAUDE.md rule 7): ErrCacheExpired-like
+	// Fail closed on source errors: ErrCacheExpired-like
 	// errors propagate unwrapped for the service's errors.Is mapping.
 	t.Run("anchor_source_error_propagates", func(t *testing.T) {
 		src := &fakeAnchors{err: errCacheExpired}

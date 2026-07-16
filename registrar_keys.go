@@ -3,7 +3,7 @@ package rpcert
 import "crypto"
 
 // KeyProvenance records how a registrar verification key was obtained, for
-// the verification report's provenance (WP-07 Decision 8; README Decisions).
+// the verification report's provenance (per-registry key pinning).
 type KeyProvenance string
 
 const (
@@ -11,7 +11,7 @@ const (
 	// (until MS registrars publish keys uniformly).
 	ProvenancePinned KeyProvenance = "pinned"
 	// ProvenanceTrustService — key resolved via the trust service
-	// wrprc_issuer/registrar metadata (wired in WP-09).
+	// wrprc_issuer/registrar metadata (wired by the verifier service).
 	ProvenanceTrustService KeyProvenance = "trust-service"
 )
 
@@ -22,8 +22,8 @@ type RegistrarKeys interface {
 }
 
 // PinnedRegistrarKeys is the config-driven pinning implementation: one
-// public key per registry base URL (ARF TS5 §3.2.2 leaves key discovery to
-// deployment — see WP-07 README Decisions).
+// public key per registry base URL ([ARF TS5 §3.2.2] leaves key discovery to
+// deployment).
 type PinnedRegistrarKeys struct {
 	byURI map[string]crypto.PublicKey
 }

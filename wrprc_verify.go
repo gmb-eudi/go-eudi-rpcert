@@ -12,7 +12,7 @@ import (
 // Verify validates the WRPRC end-to-end, fail closed:
 //
 //  1. signer chain (x5c/x5chain, leaf first) to WRPRCIssuer anchors —
-//     CLAUDE.md rule 6; ETSI TS 119 475 GEN-5.2.1-03 (the provider's
+//     trust anchored, never from the token; ETSI TS 119 475 GEN-5.2.1-03 (the provider's
 //     signing certificate is published on a trusted list)
 //  2. token signature with the leaf key via go-eudi-crypto —
 //     GEN-5.2.1-04 (JAdES B-B) / GEN-5.2.1-05 (COSE per RFC 9052/9360)
@@ -26,8 +26,8 @@ import (
 // performed is only trustworthy after this point.
 //
 // Status-list state (status.status_list) is NOT checked here — services
-// check it via go-statuslist (WP-04); Verify only surfaces StatusRef
-// (WP-07 Decision 11).
+// check it via go-statuslist; Verify only surfaces StatusRef
+// (revocation is surfaced, not resolved, here).
 func (r *WRPRC) Verify(src trust.AnchorSource, clock func() time.Time) error {
 	if clock == nil {
 		return fmt.Errorf("%w: nil clock", ErrMalformed)
@@ -38,13 +38,13 @@ func (r *WRPRC) Verify(src trust.AnchorSource, clock func() time.Time) error {
 	at := clock()
 	leaf := r.Chain[0]
 
-	// (1) chain to WRPRCIssuer anchors (territory per WP-07 Decision 6).
+	// (1) chain to WRPRCIssuer anchors (territory-scoped).
 	if err := chainToAnchors(leaf, r.Chain[1:], src, trust.WRPRCIssuer, at); err != nil {
 		return err
 	}
 
 	// (2) signature — algorithm policy enforced inside go-eudi-crypto
-	// (hard rule 4: alg derived from the key, never from the token).
+	// (alg derived from the key, never from the token).
 	switch r.Format {
 	case FormatJWT:
 		if _, _, err := eudicrypto.VerifyJWS(r.Raw, leaf.PublicKey); err != nil {

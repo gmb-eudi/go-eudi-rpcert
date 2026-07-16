@@ -26,8 +26,8 @@ func genP256(t testing.TB) *ecdsa.PrivateKey {
 	return k
 }
 
-// signCompactJWS hand-rolls a compact ES256 JWS (RFC 7515 §5.1; signature
-// is the raw R||S pair, 32+32 bytes for P-256 per RFC 7518 §3.4).
+// signCompactJWS hand-rolls a compact ES256 JWS ([RFC 7515 §5.1]; signature
+// is the raw R||S pair, 32+32 bytes for P-256 per [RFC 7518 §3.4]).
 func signCompactJWS(t testing.TB, header map[string]any, payload []byte, key *ecdsa.PrivateKey) []byte {
 	t.Helper()
 	hb, err := json.Marshal(header)
@@ -47,7 +47,7 @@ func signCompactJWS(t testing.TB, header map[string]any, payload []byte, key *ec
 	return []byte(signingInput + "." + enc.EncodeToString(sig))
 }
 
-// x5c encodes a chain per RFC 7515 §4.1.6 (standard base64 of DER).
+// x5c encodes a chain per [RFC 7515 §4.1.6] (standard base64 of DER).
 func x5c(certs ...*x509.Certificate) []any {
 	out := make([]any, len(certs))
 	for i, c := range certs {

@@ -17,7 +17,7 @@ import (
 	trust "github.com/gmb-eudi/go-eudi-trust"
 )
 
-// COSE header labels (RFC 9052 §3.1 alg=1; RFC 9596 typ=16; RFC 9360
+// COSE header labels ([RFC 9052 §3.1] alg=1; RFC 9596 typ=16; RFC 9360
 // x5chain=33) — test-local mirror of the values wrprc_cwt.go pins.
 const (
 	hdrAlg     = int64(1)
@@ -129,7 +129,7 @@ func TestParseWRPRCCWTGolden(t *testing.T) {
 	}
 }
 
-// WP-07 Decision 5: RFC 8392 integer keys 6 (iat) / 4 (exp) are accepted.
+// RFC 8392 integer keys 6 (iat) / 4 (exp) are accepted.
 func TestParseWRPRCCWTIntegerTimeKeys(t *testing.T) {
 	ca, leaf, key := wrprcSigner(t)
 	base := baseWRPRCClaims()
@@ -161,7 +161,7 @@ func TestParseWRPRCCWTIntegerTimeKeys(t *testing.T) {
 	}
 }
 
-// T-07.5 acceptance: "same matrix over CWT".
+// "Same matrix over CWT".
 func TestWRPRCVerifyCWT(t *testing.T) {
 	ca, leaf, key := wrprcSigner(t)
 	chain := []*x509.Certificate{leaf, ca.Cert}

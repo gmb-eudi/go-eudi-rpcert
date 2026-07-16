@@ -7,7 +7,7 @@ import (
 )
 
 // RegistrationRef is the ARF RPRC_19a registration reference embedded in EVERY
-// authorization request (ADR-0003 decision 2) — with or without an attached
+// authorization request — with or without an attached
 // WRPRC — so wallets can query the registrar themselves: the client's
 // display name, its registered unique identifier, the national registry
 // API URL (CIR (EU) 2025/848 Art. 3(5)) and the intended-use identifier.
@@ -19,8 +19,8 @@ type RegistrationRef struct {
 }
 
 // NewRegistrationRef validates and builds the reference. All four fields
-// are required (ADR-0003 names all four); an incomplete reference cannot be
-// built, so WP-08 can guarantee "always present" structurally.
+// are required (all four fields); an incomplete reference cannot be
+// built, so the request builder can guarantee "always present" structurally.
 func NewRegistrationRef(clientName, clientID, registryURI, intendedUseID string) (RegistrationRef, error) {
 	r := RegistrationRef{
 		ClientName:    clientName,
@@ -34,7 +34,7 @@ func NewRegistrationRef(clientName, clientID, registryURI, intendedUseID string)
 	return r, nil
 }
 
-// Validate re-checks completeness (WP-08 calls it before request build).
+// Validate re-checks completeness (called before request build).
 func (r RegistrationRef) Validate() error {
 	switch {
 	case r.ClientName == "":
@@ -51,9 +51,9 @@ func (r RegistrationRef) Validate() error {
 	return nil
 }
 
-// registrationRefJSON pins the wire form to the TS 119 475 §5.2.4 Table 7/9
-// claim vocabulary — name, sub, registry_uri, intended_use_id (WP-07
-// Decision 9). The enclosing request-object claim name is WP-08's decision.
+// registrationRefJSON pins the wire form to the [ETSI TS 119 475 §5.2.4] Table 7/9
+// claim vocabulary — name, sub, registry_uri, intended_use_id).
+// The enclosing request-object claim name is the request builder's choice.
 type registrationRefJSON struct {
 	Name          string `json:"name"`
 	Sub           string `json:"sub"`
@@ -77,11 +77,11 @@ func (r RegistrationRef) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON parses the wire shape written by MarshalJSON and validates
 // completeness, so a corrupted or truncated stored value fails loudly
-// rather than silently decoding to a zero-value reference (hard rule 7,
+// rather than silently decoding to a zero-value reference (fail closed,
 // fail closed) — MarshalJSON alone made RegistrationRef write-only under
 // encoding/json (the default field-name-matching reflection cannot map
 // "registry_uri" etc. back onto ClientName/ClientID/RegistryURI/
-// IntendedUseID), which broke WP-08's Session/SessionStore JSON
+// IntendedUseID), which broke the verifier's Session/SessionStore JSON
 // round-trip contract (Session embeds RegistrationRef directly).
 func (r *RegistrationRef) UnmarshalJSON(data []byte) error {
 	var wire registrationRefJSON
@@ -101,7 +101,7 @@ func (r *RegistrationRef) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Claims returns the reference as request-object claim values for WP-08's
+// Claims returns the reference as request-object claim values for the
 // request builder (ARF RPRC_19a extension).
 func (r RegistrationRef) Claims() (map[string]any, error) {
 	if err := r.Validate(); err != nil {

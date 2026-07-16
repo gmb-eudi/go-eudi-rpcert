@@ -12,7 +12,7 @@ import (
 	"github.com/gmb-eudi/go-eudi-rpcert/ts5"
 )
 
-// WRPRC serialization formats (WP-07 README public interface).
+// WRPRC serialization formats (public interface).
 const (
 	FormatJWT = "jwt"
 	FormatCWT = "cwt"
@@ -20,13 +20,13 @@ const (
 
 // Credential format identifiers used in WRPRC/ARF TS5 credential entries —
 // OpenID4VP 1.0 Annex B format ids (data formats, not crypto algorithms;
-// hard rule 4 concerns algorithms only).
+// the no-algorithm-literal rule concerns algorithms only).
 const (
 	CredentialFormatSDJWTVC = "dc+sd-jwt" //nolint:gosec // G101: OpenID4VP data-format identifier, not a credential (name matches gosec's "cred" heuristic)
 	CredentialFormatMdoc    = "mso_mdoc"
 )
 
-// WRPRCPolicyOID — ETSI TS 119 475 §6.1.3: itu-t(0)
+// WRPRCPolicyOID — [ETSI TS 119 475 §6.1.3]: itu-t(0)
 // identified-organization(4) etsi(0) eudiwrpa(19475) policy-identifiers(3)
 // wrprc(1). policy_id must reference it (OVR-6.1.3-01/-02).
 const WRPRCPolicyOID = "0.4.0.19475.3.1"
@@ -35,7 +35,7 @@ const WRPRCPolicyOID = "0.4.0.19475.3.1"
 // The JWT form uses the abbreviated JOSE typ (RFC 7515/8725: the
 // "application/" prefix is dropped). The CWT form carries the type in COSE
 // protected-header label 16 (RFC 9596), whose value is a full media type —
-// so the "application/" prefix is REQUIRED there (WP-07 Decision, T-07.5;
+// so the "application/" prefix is REQUIRED there (media-type registration;
 // same convention as go-statuslist's application/statuslist+cwt, and the
 // only form the veraison/go-cose encoder in go-eudi-crypto accepts for a
 // media-type header). "rc-wrp+cwt" alone is the media subtype, not the
@@ -45,7 +45,7 @@ const (
 	wrprcTypCWT = "application/rc-wrp+cwt"
 )
 
-// LangValue is a TS 119 475 §5.2.4 localized string ({lang, value} — note:
+// LangValue is a [ETSI TS 119 475 §5.2.4] localized string ({lang, value} — note:
 // the WRPRC uses "value" where ARF TS5's MultiLangString uses "content").
 type LangValue struct {
 	Lang  string `json:"lang"`
@@ -54,7 +54,7 @@ type LangValue struct {
 
 // StatusRef points into the issuer's Token Status List
 // (TS 119 475 GEN-6.2.6.1-04: status.status_list.{idx,uri}). Checked by the
-// service via go-statuslist (WP-04) — see WP-07 Decision 11.
+// service via go-statuslist — revocation is surfaced, not resolved, here.
 type StatusRef struct {
 	Index int64  `json:"idx"`
 	URI   string `json:"uri"`
@@ -77,8 +77,8 @@ type SupervisoryContact struct {
 
 // RegisteredCredential mirrors one WRPRC credentials/provides_attestations
 // entry (TS 119 475 Tables 8/9). It maps 1:1 onto dcql.RegisteredCredential
-// (WP-05) for WithinScope checks; AllClaims=true when the claim list is
-// absent (WP-07 Decision 12, OID4VP §6.1 semantics).
+// (go-dcql) for WithinScope checks; AllClaims=true when the claim list is
+// absent ([OID4VP §6.1] semantics).
 type RegisteredCredential struct {
 	Format         string
 	DoctypesOrVCTs []string
@@ -87,7 +87,7 @@ type RegisteredCredential struct {
 }
 
 // WRPRC is a parsed wallet-relying party registration certificate
-// (ETSI TS 119 475 §5.2; CIR (EU) 2025/848 Art. 8 / Annex V).
+// ([ETSI TS 119 475 §5.2]; CIR (EU) 2025/848 Art. 8 / Annex V).
 type WRPRC struct {
 	Raw    []byte
 	Format string // FormatJWT | FormatCWT
@@ -127,7 +127,7 @@ func ParseWRPRC(raw []byte) (*WRPRC, error) {
 		return nil, fmt.Errorf("%w: empty input", ErrMalformed)
 	}
 	// COSE_Sign1 sniff: tag 18 (0xd2) or the 4-element array (0x84) —
-	// RFC 9052 §4.2. Everything else with exactly two dots is compact JWS.
+	// [RFC 9052 §4.2]. Everything else with exactly two dots is compact JWS.
 	if raw[0] == 0xd2 || raw[0] == 0x84 {
 		return parseWRPRCCWT(raw)
 	}
@@ -139,7 +139,7 @@ func ParseWRPRC(raw []byte) (*WRPRC, error) {
 
 // parseWRPRCJWT — header per TS 119 475 GEN-5.2.2-01 (Table 5): typ
 // rc-wrp+jwt, alg, x5c. The alg VALUE is judged only by go-eudi-crypto at
-// Verify time (hard rule 4) — here only its presence is structural.
+// Verify time (alg from the key) — here only its presence is structural.
 func parseWRPRCJWT(raw []byte) (*WRPRC, error) {
 	parts := bytes.Split(raw, []byte("."))
 	if len(parts) != 3 {
@@ -168,7 +168,7 @@ func parseWRPRCJWT(raw []byte) (*WRPRC, error) {
 	}
 	var chain []*x509.Certificate
 	for i, b64 := range head.X5C {
-		der, err := base64.StdEncoding.DecodeString(b64) // RFC 7515 §4.1.6
+		der, err := base64.StdEncoding.DecodeString(b64) // [RFC 7515 §4.1.6]
 		if err != nil {
 			return nil, fmt.Errorf("%w: x5c[%d]: %v", ErrMalformed, i, err)
 		}

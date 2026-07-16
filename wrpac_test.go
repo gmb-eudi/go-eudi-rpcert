@@ -9,10 +9,10 @@ import (
 	"github.com/gmb-eudi/go-eudi-rpcert/internal/testpki"
 )
 
-// T-07.2 acceptance: test-PKI matrix — each missing/wrong profile element
-// yields a DISTINCT typed error (TS 119 411-8 §6.6.1, TS 119 475 Annex A).
+// Test-PKI matrix — each missing/wrong profile element
+// yields a DISTINCT typed error ([ETSI TS 119 411-8 §6.6.1], TS 119 475 Annex A).
 
-// All four policy identifiers of TS 119 411-8 §5.3 are accepted.
+// All four policy identifiers of [ETSI TS 119 411-8 §5.3] are accepted.
 func TestLoadWRPACAcceptsAllEudiwrpPolicies(t *testing.T) {
 	ca := testpki.NewCA(t, "TEST ACCESS CA")
 	for _, tt := range []struct {
@@ -127,7 +127,7 @@ func TestLoadWRPACProfileMatrix(t *testing.T) {
 	}
 }
 
-// EKU absent, EKU=any and EKU=clientAuth are all acceptable (Decision 3).
+// EKU absent, EKU=any and EKU=clientAuth are all acceptable.
 func TestLoadWRPACEKUAllowed(t *testing.T) {
 	ca := testpki.NewCA(t, "TEST ACCESS CA")
 	for _, tt := range []struct {
@@ -187,10 +187,10 @@ func TestLoadWRPACEntitlementExtraction(t *testing.T) {
 	})
 }
 
-// Decision 2: no intermediary entitlement exists at EU level (TS 119 475
-// Annex A.2 has none; ARF TS5 §2.1 Note: isIntermediary is API-only). Even a
+// No intermediary entitlement exists at EU level (TS 119 475
+// Annex A.2 has none; [ARF TS5 §2.1] Note: isIntermediary is API-only). Even a
 // WRPAC carrying every Annex A.2 entitlement is NOT intermediary-capable;
-// the authoritative check is T-07.9's registrar linkage.
+// the authoritative check is the registrar-linkage call.
 func TestLoadWRPACIntermediaryCapabilityIsAPIOnly(t *testing.T) {
 	ca := testpki.NewCA(t, "TEST ACCESS CA")
 	opts := testpki.DefaultWRPAC()

@@ -1,7 +1,7 @@
-// Package testpki generates the WP-07 test PKI at test runtime: an access-CA
+// Package testpki generates the test PKI at test runtime: an access-CA
 // / WRPRC-issuer CA and end-entity certificates with every TS 119 411-8
-// profile knob the T-07.2 matrix mutates. No private key or certificate is
-// ever committed (ADR-0007).
+// profile knob the certificate-profile matrix mutates. No private key or certificate is
+// ever committed.
 package testpki
 
 import (
@@ -27,8 +27,8 @@ var (
 
 var (
 	oidSubjectAltName  = asn1.ObjectIdentifier{2, 5, 29, 17}
-	oidTelephoneNumber = asn1.ObjectIdentifier{2, 5, 4, 20} // X.520 §6.7.1 id-at-telephoneNumber
-	oidOrganizationID  = asn1.ObjectIdentifier{2, 5, 4, 97} // EN 319 412-1 §5.1.4 organizationIdentifier
+	oidTelephoneNumber = asn1.ObjectIdentifier{2, 5, 4, 20} // [X.520 §6.7.1] id-at-telephoneNumber
+	oidOrganizationID  = asn1.ObjectIdentifier{2, 5, 4, 97} // [ETSI EN 319 412-1 §5.1.4] organizationIdentifier
 )
 
 // CA is an in-test certification authority.
@@ -79,7 +79,7 @@ func NewCA(t testing.TB, cn string) *CA {
 	return &CA{Cert: cert, Key: key}
 }
 
-// CertOpts drives the profile knobs the T-07.2 matrix mutates.
+// CertOpts drives the profile knobs the certificate-profile matrix mutates.
 type CertOpts struct {
 	CommonName string
 	Country    string
@@ -102,7 +102,7 @@ func DefaultWRPAC() CertOpts {
 		Country:    "DE",
 		OrgID:      "NTRDE-HRB123456",
 		Policies: [][]uint64{
-			{0, 4, 0, 194118, 1, 4}, // QCP-l-eudiwrp (TS 119 411-8 §5.3)
+			{0, 4, 0, 194118, 1, 4}, // QCP-l-eudiwrp ([ETSI TS 119 411-8 §5.3])
 			{0, 4, 0, 19475, 1, 1},  // Service_Provider (TS 119 475 A.2.1)
 		},
 		SANURIs:  []string{"https://rp.example.com/support"},
@@ -159,7 +159,7 @@ func (ca *CA) Issue(t testing.TB, opts CertOpts) (*x509.Certificate, *ecdsa.Priv
 }
 
 // buildSAN assembles SubjectAltName by hand so the otherName/telephoneNumber
-// GeneralName (RFC 5280 §4.2.1.6; TS 119 411-8 GEN-6.6.1-07) can be
+// GeneralName ([RFC 5280 §4.2.1.6]; TS 119 411-8 GEN-6.6.1-07) can be
 // produced — Go's template fields cannot express otherName.
 func buildSAN(t testing.TB, opts CertOpts) (pkix.Extension, bool) {
 	t.Helper()

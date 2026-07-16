@@ -9,7 +9,7 @@ import (
 	eudicrypto "github.com/gmb-eudi/go-eudi-crypto"
 )
 
-// Certificate policy OIDs — ETSI TS 119 411-8 V1.1.1 §5.3 (their inclusion
+// Certificate policy OIDs — [ETSI TS 119 411-8 V1.1.1 §5.3] (their inclusion
 // mandated by GEN-6.6.1-03): itu-t(0) identified-organization(4) etsi(0)
 // eudiwrp(194118) policy-identifiers(1) {ncp-natural(1), ncp-legal(2),
 // qcp-natural(3), qcp-legal(4)}.
@@ -57,7 +57,7 @@ var entitlementURIByOID = map[string]string{
 
 // knownEntitlementURIs is the Annex A.2 URI membership set, derived from
 // entitlementURIByOID's values so the two vocabularies never drift. Consumed
-// by WRPRC entitlement validation (WRPRC.Verify, GEN-5.2.4-03; T-07.4).
+// by WRPRC entitlement validation (WRPRC.Verify, GEN-5.2.4-03).
 var knownEntitlementURIs = func() map[string]bool {
 	m := make(map[string]bool, len(entitlementURIByOID))
 	for _, uri := range entitlementURIByOID {
@@ -67,16 +67,16 @@ var knownEntitlementURIs = func() map[string]bool {
 }()
 
 // intermediaryEntitlementURIs is intentionally EMPTY: TS 119 475 Annex A.2
-// defines no intermediary entitlement and ARF TS5 v1.3 §2.1 (Note) makes
+// defines no intermediary entitlement and [ARF TS5 v1.3 §2.1] (Note) makes
 // isIntermediary available only via the Registrar API. When a national or
 // EU profile defines one, add it here; until then IsIntermediaryCapable is
-// always false and RegistrarClient.VerifyIntermediaryLinkage (T-07.9) is
-// the authoritative check. (WP-07 Decision 2.)
+// always false and RegistrarClient.VerifyIntermediaryLinkage is
+// the authoritative check.
 var intermediaryEntitlementURIs = map[string]bool{}
 
 var (
 	oidSubjectAltName  = asn1.ObjectIdentifier{2, 5, 29, 17}
-	oidTelephoneNumber = asn1.ObjectIdentifier{2, 5, 4, 20} // X.520 §6.7.1
+	oidTelephoneNumber = asn1.ObjectIdentifier{2, 5, 4, 20} // [X.520 §6.7.1]
 )
 
 func mustOID(ints ...uint64) x509.OID {
@@ -97,16 +97,15 @@ type WRPAC struct {
 
 // LoadWRPAC parses a WRPAC chain (leaf first; each element PEM or DER) and
 // runs the TS 119 411-8 profile checks. Each broken element yields its own
-// sentinel (T-07.2 acceptance):
+// sentinel:
 //
 //   - certificatePolicies includes an eudiwrp policy OID
-//     (TS 119 411-8 GEN-6.6.1-03, OIDs from §5.3)        → ErrPolicyOID
+//     (TS 119 411-8 GEN-6.6.1-03, OIDs from [ETSI TS 119 411-8 §5.3])        → ErrPolicyOID
 //   - contact SAN: URI / rfc822Name / telephone otherName
 //     (TS 119 411-8 GEN-6.6.1-07 [CHOICE])               → ErrContactSAN
-//   - keyUsage includes digitalSignature (WP-07 Decision 3:
+//   - keyUsage includes digitalSignature (
 //     the WRPAC signs OID4VP request objects)            → ErrKeyUsage
-//   - EKU absent, anyExtendedKeyUsage or clientAuth
-//     (WP-07 Decision 3)                                 → ErrExtKeyUsage
+//   - EKU absent, anyExtendedKeyUsage or clientAuth      → ErrExtKeyUsage
 //   - entitlement OIDs under 0.4.0.19475.1 map to Annex A.2
 //     URIs; unknown arc children rejected (fail closed)  → ErrUnknownEntitlement
 func LoadWRPAC(chain [][]byte) (*WRPAC, error) {
@@ -150,7 +149,7 @@ func LoadWRPAC(chain [][]byte) (*WRPAC, error) {
 }
 
 // hasEudiwrpPolicy — TS 119 411-8 GEN-6.6.1-03 [CHOICE]: at least one of
-// the four §5.3 policy identifiers.
+// the four [ETSI TS 119 411-8 §5.3] policy identifiers.
 func hasEudiwrpPolicy(leaf *x509.Certificate) bool {
 	for _, oid := range leaf.Policies {
 		for _, want := range wrpacPolicyOIDs {
@@ -164,7 +163,7 @@ func hasEudiwrpPolicy(leaf *x509.Certificate) bool {
 
 // entitlementsFromPolicies extracts Annex A.2 entitlements expressed as
 // certificatePolicies OIDs under the id-etsi-wrpa-entitlement arc
-// (TS 119 475 §4.2 + Annex A.1; placement interpretation = WP-07 Decision 1).
+// ([ETSI TS 119 475 §4.2] + Annex A.1; placement interpretation pinned here).
 func entitlementsFromPolicies(leaf *x509.Certificate) ([]string, error) {
 	var out []string
 	for _, oid := range leaf.Policies {
@@ -201,7 +200,7 @@ func hasContactSAN(cert *x509.Certificate) (bool, error) {
 
 // hasTelephoneOtherName walks the raw SubjectAltName extension: Go's parser
 // surfaces URI/email/DNS/IP GeneralNames but drops otherName, so the
-// telephone form (RFC 5280 §4.2.1.6 GeneralName CHOICE [0]) is parsed here.
+// telephone form ([RFC 5280 §4.2.1.6] GeneralName CHOICE [0]) is parsed here.
 func hasTelephoneOtherName(cert *x509.Certificate) (bool, error) {
 	for _, ext := range cert.Extensions {
 		if !ext.Id.Equal(oidSubjectAltName) {
@@ -231,7 +230,7 @@ func hasTelephoneOtherName(cert *x509.Certificate) (bool, error) {
 	return false, nil
 }
 
-// checkEKU — WP-07 Decision 3: EKU absent is fine; when present it must
+// checkEKU: EKU absent is fine; when present it must
 // include anyExtendedKeyUsage or clientAuth, otherwise the certificate is
 // scoped away from wallet-facing use.
 func checkEKU(c *x509.Certificate) error {

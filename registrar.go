@@ -18,7 +18,7 @@ import (
 	"github.com/gmb-eudi/go-eudi-rpcert/ts5"
 )
 
-// Default limits (WP-07 Decision 7 + a pagination safety cap).
+// Default limits (response-age window + a pagination safety cap).
 const (
 	defaultMaxResponseAge = 24 * time.Hour
 	defaultMaxPages       = 100
@@ -33,7 +33,7 @@ type Provenance struct {
 }
 
 // RegistrarClient is a typed ARF TS5 v1.3 Registrar API client with JWS
-// response verification. Framework-free: injected Doer + clock (ADR-0004).
+// response verification. Framework-free: injected Doer + clock.
 type RegistrarClient struct {
 	doer           Doer
 	keys           RegistrarKeys
@@ -48,7 +48,7 @@ type RegistrarClient struct {
 // RegistrarOption configures a RegistrarClient.
 type RegistrarOption func(*RegistrarClient)
 
-// WithClock injects the clock (docs/conventions.md time rule).
+// WithClock injects the clock (no ambient time).
 func WithClock(clock func() time.Time) RegistrarOption {
 	return func(c *RegistrarClient) {
 		if clock != nil {
@@ -57,8 +57,7 @@ func WithClock(clock func() time.Time) RegistrarOption {
 	}
 }
 
-// WithMaxResponseAge sets the freshness window for the response iat
-// (WP-07 Decision 7).
+// WithMaxResponseAge sets the freshness window for the response iat.
 func WithMaxResponseAge(d time.Duration) RegistrarOption {
 	return func(c *RegistrarClient) {
 		if d > 0 {
@@ -147,7 +146,7 @@ func (q WRPQuery) values() url.Values {
 	return v
 }
 
-// GetWRP queries GET /wrp and joins all cursor pages (ARF TS5 v1.3 §3.2.2).
+// GetWRP queries GET /wrp and joins all cursor pages ([ARF TS5 v1.3 §3.2.2]).
 func (c *RegistrarClient) GetWRP(ctx context.Context, registryURI string, q WRPQuery) ([]ts5.WalletRelyingParty, error) {
 	base := q.values()
 	var all []ts5.WalletRelyingParty
@@ -178,7 +177,7 @@ func (c *RegistrarClient) GetWRP(ctx context.Context, registryURI string, q WRPQ
 		// NOTE: a repeating cursor (registrar stuck on the same page) is
 		// deliberately NOT rejected here — maxPages (WithMaxPages) is the
 		// single fail-closed backstop against any runaway pagination,
-		// repeating-cursor or otherwise (WP-07 T-07.7 self-review: an
+		// repeating-cursor or otherwise (self-review: an
 		// earlier "cursor did not advance" check pre-empted the page-cap
 		// test before the cap could trip).
 		cursor = env.Pagination.NextCursor
@@ -186,7 +185,7 @@ func (c *RegistrarClient) GetWRP(ctx context.Context, registryURI string, q WRPQ
 	return all, nil
 }
 
-// GetWRPByID queries GET /wrp/{identifier} (ARF TS5 v1.3 §3.2.2).
+// GetWRPByID queries GET /wrp/{identifier} ([ARF TS5 v1.3 §3.2.2]).
 func (c *RegistrarClient) GetWRPByID(ctx context.Context, registryURI, identifier string) (*ts5.WalletRelyingParty, error) {
 	if identifier == "" {
 		return nil, fmt.Errorf("%w: empty identifier", ErrMalformed)
@@ -247,7 +246,7 @@ func (c *RegistrarClient) verifyResponse(registryURI string, token []byte) ([]by
 	if err != nil {
 		return nil, err
 	}
-	payload, _, err := eudicrypto.VerifyJWS(token, key) // alg from key (hard rule 4)
+	payload, _, err := eudicrypto.VerifyJWS(token, key) // alg from key, never from the token
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrResponseSignature, err)
 	}
@@ -258,8 +257,8 @@ func (c *RegistrarClient) verifyResponse(registryURI string, token []byte) ([]by
 	return payload, nil
 }
 
-// checkFreshness enforces the response-age window against the payload iat
-// (WP-07 Decision 7). All ARF TS5 envelopes carry iat.
+// checkFreshness enforces the response-age window against the payload iat.
+// All ARF TS5 envelopes carry iat.
 func (c *RegistrarClient) checkFreshness(payload []byte) error {
 	var env struct {
 		Iat int64 `json:"iat"`

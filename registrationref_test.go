@@ -22,8 +22,8 @@ func validRef(t *testing.T) rpcert.RegistrationRef {
 	return r
 }
 
-// Serializer golden: TS 119 475 Table 7/9 claim vocabulary (WP-07
-// Decision 9) — WP-08 embeds exactly this object into the request object
+// Serializer golden: TS 119 475 Table 7/9 claim vocabulary —
+// the request builder embeds exactly this object into the request object
 // (ARF RPRC_19a).
 func TestRegistrationRefGoldenJSON(t *testing.T) {
 	out, err := json.Marshal(validRef(t))
@@ -36,7 +36,7 @@ func TestRegistrationRefGoldenJSON(t *testing.T) {
 	}
 }
 
-// Round-trip: WP-08 stores RegistrationRef inside Session via generic
+// Round-trip: the verifier stores RegistrationRef inside Session via generic
 // encoding/json (SessionStore contract). MarshalJSON validates on write;
 // UnmarshalJSON must reconstruct the exact same value, not silently zero it.
 func TestRegistrationRefJSONRoundtrip(t *testing.T) {
@@ -84,9 +84,9 @@ func TestRegistrationRefClaims(t *testing.T) {
 	}
 }
 
-// ADR-0003 decision 2 names all four fields — each is required, and an
+// All four fields are named — each is required, and an
 // incomplete reference can neither be built nor serialized (this is how
-// WP-08's "request without RegistrationRef impossible" holds).
+// the "request without RegistrationRef impossible" invariant holds).
 func TestRegistrationRefValidation(t *testing.T) {
 	tests := []struct {
 		name                                          string

@@ -55,7 +55,7 @@ func TestParseWRPRCJWTGolden(t *testing.T) {
 	if r.PublicBody {
 		t.Error("public_body = true, want false")
 	}
-	// Extraction feeds dcql.WithinScope (T-07.4 acceptance): 1:1 field map
+	// Extraction feeds dcql.WithinScope: 1:1 field map
 	// to dcql.RegisteredCredential.
 	want := []rpcert.RegisteredCredential{
 		{
@@ -126,7 +126,7 @@ func TestParseWRPRCJWTHeaderAndClaims(t *testing.T) {
 	}
 }
 
-// T-07.4 acceptance: forged sig, expired, tampered claim list — fail.
+// Forged sig, expired, tampered claim list — fail.
 func TestWRPRCVerifyJWT(t *testing.T) {
 	ca, leaf, key := wrprcSigner(t)
 	chain := []*x509.Certificate{leaf, ca.Cert}

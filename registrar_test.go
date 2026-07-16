@@ -25,7 +25,7 @@ func pinned(t *testing.T, rs *registrarServer) rpcert.RegistrarKeys {
 	return rpcert.NewPinnedRegistrarKeys(map[string]crypto.PublicKey{rs.srv.URL: pinnedKeysFor(rs)})
 }
 
-// T-07.7 acceptance: recorded fixtures; pagination joins pages.
+// Recorded fixtures; pagination joins pages.
 func TestGetWRPJoinsPages(t *testing.T) {
 	key := genP256(t)
 	rs := newRegistrarServer(t, key)
@@ -111,14 +111,14 @@ func TestGetWRPByID(t *testing.T) {
 	if wrp.TradeName != "Example Age Check" || wrp.Country != "DE" {
 		t.Errorf("wrp = %+v", wrp)
 	}
-	// Provenance surfaces the pinned key (WP-07 Decision 8).
+	// Provenance surfaces the pinned key.
 	p := c.LastProvenance()
 	if p.KeyProvenance != rpcert.ProvenancePinned || p.RegistryURI != rs.srv.URL {
 		t.Errorf("provenance = %+v, want pinned/%s", p, rs.srv.URL)
 	}
 }
 
-// T-07.7 acceptance: tampered JWS fails.
+// Tampered JWS fails.
 func TestGetWRPTamperedJWSFails(t *testing.T) {
 	key := genP256(t)
 	rs := newRegistrarServer(t, key)
@@ -149,7 +149,7 @@ func TestGetWRPNoKeyConfigured(t *testing.T) {
 	}
 }
 
-// T-07.7 acceptance: physicalAddress-absent assertion — a registrar that
+// physicalAddress-absent assertion — a registrar that
 // leaks an address is rejected (ts5.ErrAddressPresent bubbles up).
 func TestGetWRPRejectsLeakedAddress(t *testing.T) {
 	key := genP256(t)

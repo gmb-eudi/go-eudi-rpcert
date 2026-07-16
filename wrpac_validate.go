@@ -5,7 +5,7 @@ import (
 )
 
 // ValidateAgainst chains the WRPAC to AccessCA trust anchors from the trust
-// service (CLAUDE.md rule 6; CIR (EU) 2025/848 Art. 7 — access-certificate
+// service (CIR (EU) 2025/848 Art. 7 — access-certificate
 // providers operate under Member State supervision, their CAs are the
 // AccessCA anchor set). Uses the package clock (clock.go).
 func (w *WRPAC) ValidateAgainst(src trust.AnchorSource) error {

@@ -10,10 +10,10 @@ import (
 	eudicrypto "github.com/gmb-eudi/go-eudi-crypto"
 )
 
-// Hardened CBOR decode options (docs/conventions.md): bounded nesting and
+// Hardened CBOR decode options: bounded nesting and
 // sizes, duplicate map keys rejected, indefinite lengths forbidden, integers
 // normalized to int64. cbor stays wrapped — never in the public API
-// (ADR-0004).
+// (framework-free).
 var cborDec = func() cbor.DecMode {
 	dm, err := cbor.DecOptions{
 		DupMapKey:        cbor.DupMapKeyEnforcedAPF,
@@ -29,8 +29,8 @@ var cborDec = func() cbor.DecMode {
 	return dm
 }()
 
-// COSE header labels: alg (RFC 9052 §3.1), typ (RFC 9596), x5chain
-// (RFC 9360 §2). Values per ETSI TS 119 475 GEN-5.2.3-01 Table 6.
+// COSE header labels: alg ([RFC 9052 §3.1]), typ (RFC 9596), x5chain
+// ([RFC 9360 §2]). Values per ETSI TS 119 475 GEN-5.2.3-01 Table 6.
 const (
 	coseHeaderAlg     = int64(1)
 	coseHeaderTyp     = int64(16)
@@ -38,7 +38,7 @@ const (
 )
 
 // coseSign1 mirrors COSE_Sign1 = [protected bstr, unprotected map,
-// payload bstr, signature bstr] (RFC 9052 §4.2).
+// payload bstr, signature bstr] ([RFC 9052 §4.2]).
 type coseSign1 struct {
 	_           struct{} `cbor:",toarray"`
 	Protected   []byte
@@ -48,13 +48,13 @@ type coseSign1 struct {
 }
 
 // parseWRPRCCWT — header per TS 119 475 GEN-5.2.3-01 (Table 6): typ
-// application/rc-wrp+cwt (protected only — WP-07 Decision 4), alg, x5chain
-// (protected preferred, unprotected accepted — Decision 4). Signature
+// application/rc-wrp+cwt (protected only), alg, x5chain
+// (protected preferred, unprotected accepted). Signature
 // verification happens in Verify via eudicrypto.VerifyCOSESign1.
 func parseWRPRCCWT(raw []byte) (*WRPRC, error) {
 	body := raw
 	var tag cbor.RawTag
-	if err := cborDec.Unmarshal(raw, &tag); err == nil && tag.Number == 18 { // RFC 9052 §2 CBOR tag 18
+	if err := cborDec.Unmarshal(raw, &tag); err == nil && tag.Number == 18 { // [RFC 9052 §2] CBOR tag 18
 		body = tag.Content
 	}
 	var s coseSign1
@@ -104,8 +104,8 @@ func parseWRPRCCWT(raw []byte) (*WRPRC, error) {
 	return c.toWRPRC(raw, FormatCWT, chain)
 }
 
-// coseChain extracts x5chain (RFC 9360 §2: single bstr or array of bstr),
-// protected header first, unprotected accepted (WP-07 Decision 4 — the
+// coseChain extracts x5chain ([RFC 9360 §2]: single bstr or array of bstr),
+// protected header first, unprotected accepted (the
 // chain's trust comes from path validation, not signature coverage).
 func coseChain(protected, unprotected map[any]any) ([][]byte, error) {
 	v, ok := protected[coseHeaderX5Chain]
@@ -139,7 +139,7 @@ func coseChain(protected, unprotected map[any]any) ([][]byte, error) {
 // cwtClaimsToJSON converts the CWT claims map to the JWT JSON claim form so
 // both WRPRC serializations share one payload decoder. Text keys are the
 // TS 119 475 Table 7-10 names verbatim; integer keys 6/4 map to iat/exp
-// (RFC 8392 §4; WP-07 Decision 5). Unknown integer keys are ignored.
+// ([RFC 8392 §4]). Unknown integer keys are ignored.
 func cwtClaimsToJSON(claims map[any]any) ([]byte, error) {
 	out := make(map[string]any, len(claims))
 	for k, v := range claims {

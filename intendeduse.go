@@ -41,11 +41,11 @@ func (q IntendedUseQuery) values() url.Values {
 }
 
 // CheckIntendedUse calls GET /wrp/check-intended-use and returns the
-// JWS-signed boolean result (ARF TS5 v1.3 §3.2.2: "JWS-signed boolean TRUE or
+// JWS-signed boolean result ([ARF TS5 v1.3 §3.2.2]: "JWS-signed boolean TRUE or
 // FALSE response, based on if the queried parameter set can be found in the
 // Registrar's Intended use information"). Verification reuses the same
-// fetch/verifyResponse wiring as GetWRP/GetWRPByID (T-07.7) — one trust
-// decision path for every registrar endpoint (hard rule 4: alg selection
+// fetch/verifyResponse wiring as GetWRP/GetWRPByID — one trust
+// decision path for every registrar endpoint (alg selection
 // stays inside eudicrypto.VerifyJWS via c.fetch).
 func (c *RegistrarClient) CheckIntendedUse(ctx context.Context, registryURI string, q IntendedUseQuery) (bool, error) {
 	if q.RPIdentifier == "" {
@@ -65,7 +65,7 @@ func (c *RegistrarClient) CheckIntendedUse(ctx context.Context, registryURI stri
 // IntendedUseActive evaluates the intended-use lifecycle window
 // (ETSI TS 119 475 / ARF TS5 IntendedUse): active iff createdAt <= at and
 // (revokedAt absent OR at < revokedAt-day-midnight). Revocation is effective
-// from 00:00:00 UTC of revokedAt (WP-07 Decision 10 — fail-closed reading of
+// from 00:00:00 UTC of revokedAt (fail-closed reading of
 // "end date for the validity"): the entire revokedAt calendar day already
 // counts as revoked. A revoked/not-yet-active use returns
 // (false, ErrIntendedUseRevoked); malformed dates — including an empty
@@ -95,7 +95,7 @@ func IntendedUseActive(iu ts5.IntendedUse, at time.Time) (bool, error) {
 // named intended use and evaluates its lifecycle. Returns nil when active,
 // ErrIntendedUseRevoked when revoked/not-yet-active (->
 // err:registrar:intended-use-revoked), ErrIntendedUseNotFound when the id is
-// absent. Used by the portal's periodic monitoring (ADR-0003 decision 3).
+// absent. Used by the portal's periodic monitoring.
 func (c *RegistrarClient) IntendedUseStatus(ctx context.Context, registryURI, rpIdentifier, intendedUseID string) error {
 	wrp, err := c.GetWRPByID(ctx, registryURI, rpIdentifier)
 	if err != nil {

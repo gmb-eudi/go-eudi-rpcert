@@ -56,7 +56,7 @@ func startCheckServer(t *testing.T, key *ecdsa.PrivateKey, fixture string) (*che
 	return cs, srv.URL
 }
 
-// T-07.8 acceptance: TRUE / FALSE fixtures.
+// TRUE / FALSE fixtures.
 func TestCheckIntendedUse(t *testing.T) {
 	key := genP256(t)
 	for _, tt := range []struct {
@@ -126,7 +126,7 @@ func TestCheckIntendedUseTamperedFails(t *testing.T) {
 	}
 }
 
-// T-07.8 acceptance: the revokedAt monitoring predicate.
+// The revokedAt monitoring predicate.
 func TestIntendedUseActive(t *testing.T) {
 	iu := func(created, revoked string) ts5.IntendedUse {
 		return ts5.IntendedUse{IntendedUseIdentifier: "iu", CreatedAt: created, RevokedAt: revoked}
@@ -141,13 +141,13 @@ func TestIntendedUseActive(t *testing.T) {
 		{"active_no_revoke", iu("2026-01-15", ""), testpki.Clock, true, nil},
 		{"not_yet_created", iu("2026-08-01", ""), testpki.Clock, false, rpcert.ErrIntendedUseRevoked},
 		{"revoked_in_past", iu("2026-01-15", "2026-06-01"), testpki.Clock, false, rpcert.ErrIntendedUseRevoked},
-		// WP-07 Decision 10: revocation takes effect at 00:00:00 UTC of the
+		// Revocation takes effect at 00:00:00 UTC of the
 		// revokedAt date — the whole revokedAt day is already revoked.
 		{"revoked_today_effective_midnight", iu("2026-01-15", "2026-07-04"), testpki.Clock, false, rpcert.ErrIntendedUseRevoked},
 		{"revoke_in_future_still_active", iu("2026-01-15", "2026-12-31"), testpki.Clock, true, nil},
 		{"bad_created_date", iu("15-01-2026", ""), testpki.Clock, false, rpcert.ErrMalformed},
 		{"bad_revoked_date", iu("2026-01-15", "nope"), testpki.Clock, false, rpcert.ErrMalformed},
-		// Regression (WP-07 Task 8 fix wave): a schema-nonconformant
+		// Regression: a schema-nonconformant
 		// registrar response with an empty createdAt must fail closed like
 		// any other unparseable date — never "always active".
 		{"empty_created_date", iu("", ""), testpki.Clock, false, rpcert.ErrMalformed},

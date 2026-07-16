@@ -21,7 +21,7 @@ func readFixture(t *testing.T, name string) []byte {
 	return b
 }
 
-// Golden decode of the recorded /wrp payload (T-07.1 acceptance).
+// Golden decode of the recorded /wrp payload.
 func TestGoldenDecodeWRPPage1(t *testing.T) {
 	env, err := ts5.DecodeSignedWRPArray(readFixture(t, "wrp-page1.json"))
 	if err != nil {
@@ -64,7 +64,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if len(wrp.SrvDescription) != 1 || len(wrp.SrvDescription[0]) != 2 || wrp.SrvDescription[0][1].Lang != "de" {
 		t.Errorf("srvDescription = %+v", wrp.SrvDescription)
 	}
-	// IntendedUse §2.4.3
+	// IntendedUse [ARF TS5 §2.4.3]
 	if len(wrp.IntendedUse) != 2 {
 		t.Fatalf("len(intendedUse) = %d, want 2", len(wrp.IntendedUse))
 	}
@@ -78,7 +78,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if len(iu.Credentials) != 2 {
 		t.Fatalf("len(credentials) = %d, want 2", len(iu.Credentials))
 	}
-	// Credential §2.4.4 + Claim §2.4.1
+	// Credential [ARF TS5 §2.4.4] + Claim [ARF TS5 §2.4.1]
 	sd := iu.Credentials[0]
 	if sd.Format != "dc+sd-jwt" {
 		t.Errorf("format = %q", sd.Format)
@@ -95,7 +95,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if wrp.IntendedUse[1].RevokedAt != "2026-06-01" {
 		t.Errorf("intendedUse[1].revokedAt = %q", wrp.IntendedUse[1].RevokedAt)
 	}
-	// usesIntermediary §2.1
+	// usesIntermediary [ARF TS5 §2.1]
 	if len(wrp.UsesIntermediary) != 1 {
 		t.Fatalf("len(usesIntermediary) = %d, want 1", len(wrp.UsesIntermediary))
 	}
@@ -126,7 +126,7 @@ func TestGoldenDecodeWRPPage2(t *testing.T) {
 // GET /wrp/{identifier} (DecodeSignedWRP). The rpcert package only exercises
 // this decoder indirectly through RegistrarClient.GetWRPByID/
 // VerifyIntermediaryLinkage; this test closes that coverage gap for ts5
-// itself (conventions.md 85% library gate).
+// itself (the library coverage gate).
 func TestDecodeSignedWRP(t *testing.T) {
 	env, err := ts5.DecodeSignedWRP(readFixture(t, "wrp-single.json"))
 	if err != nil {
@@ -170,7 +170,7 @@ func TestDecodeSignedWRPValidation(t *testing.T) {
 }
 
 // TestDecodeSignedIntendedUseCheckResult is the direct ts5-package golden
-// decode for GET /wrp/check-intended-use. rpcert.CheckIntendedUse (T-07.8)
+// decode for GET /wrp/check-intended-use. rpcert.CheckIntendedUse
 // only exercises this decoder from the rpcert package's own test binary,
 // which does not count toward ts5's coverage — this test closes that gap.
 func TestDecodeSignedIntendedUseCheckResult(t *testing.T) {
@@ -200,7 +200,7 @@ func TestDecodeSignedIntendedUseCheckResult(t *testing.T) {
 		{"missing_iss", `{"iat":1,"data":{"isRegistered":true}}`, ts5.ErrEnvelope},
 		{"missing_data", `{"iss":"x","iat":1}`, ts5.ErrEnvelope},
 		{"not_json", `<html>`, ts5.ErrDecode},
-		// Fix-wave item 3: for symmetry with DecodeSignedWRP/
+		// For symmetry with DecodeSignedWRP/
 		// DecodeSignedWRPArray, this decoder must also run the
 		// rejectAddressFields privacy walk. The current {isRegistered,
 		// details} shape can't carry an address today, but a future schema
@@ -230,7 +230,7 @@ func jsonNorm(t *testing.T, b []byte) any {
 	return v
 }
 
-// Schema-drift test (T-07.1 acceptance): (a) strict decode — a fixture field
+// Schema-drift test: (a) strict decode — a fixture field
 // our structs do not model fails the build's tests, i.e. spec drift is
 // caught here, not in production; (b) re-marshal equality — a struct field
 // that renames/retypes an ARF TS5 v1.3 attribute is caught by tree comparison.
@@ -266,7 +266,7 @@ func TestEnvelopeValidation(t *testing.T) {
 		{"missing_data", `{"iss":"x","iat":1}`, ts5.ErrEnvelope},
 		{"not_json", `<html>`, ts5.ErrDecode},
 		{"empty", ``, ts5.ErrDecode},
-		// ARF TS5 §3.2.1: responses exclude WalletRelyingParty.physicalAddress;
+		// [ARF TS5 §3.2.1]: responses exclude WalletRelyingParty.physicalAddress;
 		// the JSON schema names the LegalEntity field postalAddress — both
 		// spellings are privacy-rejected before any struct field could hold them.
 		{"physicalAddress_present", `{"iss":"x","iat":1,"data":[{"physicalAddress":["street 1"],"isPSB":false,"isIntermediary":false}]}`, ts5.ErrAddressPresent},
