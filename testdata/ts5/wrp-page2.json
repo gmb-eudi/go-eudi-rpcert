@@ -1,0 +1,19 @@
+{
+  "iss": "https://registrar.example-ms.eu",
+  "iat": 1783155660,
+  "data": [
+    {
+      "tradeName": "Verifier Operator",
+      "supportURI": ["https://operator.example.eu/support"],
+      "srvDescription": [[{"lang": "en", "content": "Verification intermediary"}]],
+      "isPSB": false,
+      "entitlements": ["https://uri.etsi.org/19475/Entitlement/Service_Provider"],
+      "supervisoryAuthority": {"name": "Example State DPA", "country": "DE"},
+      "registryURI": "https://registrar.example-ms.eu/api",
+      "isIntermediary": true,
+      "identifier": [{"type": "http://data.europa.eu/eudi/id/LEI", "identifier": "529900EXAMPLE0000001"}],
+      "country": "DE"
+    }
+  ],
+  "pagination": {"has_next_page": false}
+}

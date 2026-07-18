@@ -1,0 +1,30 @@
+{
+  "iss": "https://registrar.example-ms.eu",
+  "iat": 1783155600,
+  "data": {
+    "tradeName": "Example Age Check",
+    "supportURI": ["https://rp.example.com/support"],
+    "srvDescription": [[{"lang": "en", "content": "Online age verification"}]],
+    "isPSB": false,
+    "entitlements": ["https://uri.etsi.org/19475/Entitlement/Service_Provider"],
+    "supervisoryAuthority": {"name": "Example State DPA", "country": "DE"},
+    "registryURI": "https://registrar.example-ms.eu/api",
+    "isIntermediary": false,
+    "identifier": [{"type": "http://data.europa.eu/eudi/id/EUID", "identifier": "DEUTR.HRB123456"}],
+    "country": "DE",
+    "usesIntermediary": [
+      {
+        "tradeName": "Other Operator",
+        "supportURI": ["https://other.example.eu/support"],
+        "srvDescription": [[{"lang": "en", "content": "Other intermediary"}]],
+        "isPSB": false,
+        "entitlements": ["https://uri.etsi.org/19475/Entitlement/Service_Provider"],
+        "supervisoryAuthority": {"name": "Example State DPA", "country": "DE"},
+        "registryURI": "https://registrar.example-ms.eu/api",
+        "isIntermediary": true,
+        "identifier": [{"type": "http://data.europa.eu/eudi/id/LEI", "identifier": "529900OTHEROPERATOR9"}],
+        "country": "DE"
+      }
+    ]
+  }
+}

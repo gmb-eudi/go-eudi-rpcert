@@ -1,0 +1,85 @@
+{
+  "iss": "https://registrar.example-ms.eu",
+  "iat": 1783155600,
+  "data": [
+    {
+      "tradeName": "Example Age Check",
+      "supportURI": ["https://rp.example.com/support"],
+      "srvDescription": [
+        [
+          {"lang": "en", "content": "Online age verification service"},
+          {"lang": "de", "content": "Online-Alterspruefung"}
+        ]
+      ],
+      "intendedUse": [
+        {
+          "purpose": [{"lang": "en", "content": "Proof of age for online purchase"}],
+          "privacyPolicy": [
+            {"type": "http://data.europa.eu/eudi/policy/privacy-policy", "policyURI": "https://rp.example.com/privacy"}
+          ],
+          "intendedUseIdentifier": "iu-age-001",
+          "createdAt": "2026-01-15",
+          "credentials": [
+            {
+              "format": "dc+sd-jwt",
+              "meta": {"vct_values": ["urn:eudi:pid:1"]},
+              "claims": [{"path": ["age_equal_or_over", "18"]}]
+            },
+            {
+              "format": "mso_mdoc",
+              "meta": {"doctype_value": "eu.europa.ec.eudi.pid.1"},
+              "claims": [{"path": ["eu.europa.ec.eudi.pid.1", "age_over_18"]}]
+            }
+          ]
+        },
+        {
+          "purpose": [{"lang": "en", "content": "Legacy loyalty programme"}],
+          "privacyPolicy": [
+            {"type": "http://data.europa.eu/eudi/policy/privacy-policy", "policyURI": "https://rp.example.com/privacy-legacy"}
+          ],
+          "intendedUseIdentifier": "iu-legacy-002",
+          "createdAt": "2026-01-15",
+          "revokedAt": "2026-06-01",
+          "credentials": [
+            {
+              "format": "dc+sd-jwt",
+              "meta": {"vct_values": ["urn:eudi:pid:1"]},
+              "claims": [{"path": ["given_name"]}]
+            }
+          ]
+        }
+      ],
+      "isPSB": false,
+      "entitlements": ["https://uri.etsi.org/19475/Entitlement/Service_Provider"],
+      "supervisoryAuthority": {
+        "name": "Example State DPA",
+        "country": "DE",
+        "email": ["dpa@example-ms.eu"],
+        "phone": ["+491234567890"],
+        "formURI": ["https://dpa.example-ms.eu/report"]
+      },
+      "registryURI": "https://registrar.example-ms.eu/api",
+      "usesIntermediary": [
+        {
+          "tradeName": "Verifier Operator",
+          "supportURI": ["https://operator.example.eu/support"],
+          "srvDescription": [[{"lang": "en", "content": "Verification intermediary"}]],
+          "isPSB": false,
+          "entitlements": ["https://uri.etsi.org/19475/Entitlement/Service_Provider"],
+          "supervisoryAuthority": {"name": "Example State DPA", "country": "DE"},
+          "registryURI": "https://registrar.example-ms.eu/api",
+          "isIntermediary": true,
+          "identifier": [{"type": "http://data.europa.eu/eudi/id/LEI", "identifier": "529900EXAMPLE0000001"}],
+          "country": "DE"
+        }
+      ],
+      "isIntermediary": false,
+      "legalPerson": {"legalName": ["Example Retail GmbH"]},
+      "identifier": [{"type": "http://data.europa.eu/eudi/id/EUID", "identifier": "DEUTR.HRB123456"}],
+      "country": "DE",
+      "email": ["contact@rp.example.com"],
+      "infoURI": ["https://rp.example.com"]
+    }
+  ],
+  "pagination": {"next_cursor": "b3BhcXVlLXBhZ2UtMg", "has_next_page": true}
+}
