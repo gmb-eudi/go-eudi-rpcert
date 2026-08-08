@@ -8,9 +8,9 @@ import (
 )
 
 // WalletRelyingParty — [ARF TS5 v1.3 §2.1]. Inherits the LegalEntity attributes
-// ([ARF TS5 §2.3]: "WalletRelyingParty class inherits all attributes of this class").
+// ([ARF TS5 v1.3 §2.3]: "WalletRelyingParty class inherits all attributes of this class").
 // physicalAddress/postalAddress deliberately has NO field: API responses
-// exclude it ([ARF TS5 §3.2.1]) and the decoders reject it (ErrAddressPresent).
+// exclude it ([ARF TS5 v1.3 §3.2.1]) and the decoders reject it (ErrAddressPresent).
 type WalletRelyingParty struct {
 	TradeName            string                `json:"tradeName,omitempty"`
 	SupportURI           []string              `json:"supportURI,omitempty"`
@@ -24,7 +24,7 @@ type WalletRelyingParty struct {
 	UsesIntermediary     []WalletRelyingParty  `json:"usesIntermediary,omitempty"`
 	IsIntermediary       bool                  `json:"isIntermediary"`
 
-	// LegalEntity attributes ([ARF TS5 §2.3] / TS 119 475 Annex B.2.2)
+	// LegalEntity attributes ([ARF TS5 v1.3 §2.3] / TS 119 475 Annex B.2.2)
 	LegalPerson   *LegalPerson   `json:"legalPerson,omitempty"`
 	NaturalPerson *NaturalPerson `json:"naturalPerson,omitempty"`
 	Identifiers   []Identifier   `json:"identifier,omitempty"`
@@ -116,14 +116,14 @@ type ProvidedAttestation struct {
 	Meta   json.RawMessage `json:"meta,omitempty"`
 }
 
-// Identifier — TS 119 475 Annex B.2.5 (referenced by [ARF TS5 §2.4.2]). Type is
+// Identifier — TS 119 475 Annex B.2.5 (referenced by [ARF TS5 v1.3 §2.4.2]). Type is
 // one of the http://data.europa.eu/eudi/id/* URIs (or a national extension).
 type Identifier struct {
 	Type       string `json:"type"`
 	Identifier string `json:"identifier"`
 }
 
-// Policy — TS 119 475 Annex B.2.8 (referenced by [ARF TS5 §2.4.8]).
+// Policy — TS 119 475 Annex B.2.8 (referenced by [ARF TS5 v1.3 §2.4.8]).
 type Policy struct {
 	Type      string `json:"type"`
 	PolicyURI string `json:"policyURI"`

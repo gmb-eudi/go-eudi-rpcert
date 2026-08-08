@@ -7,7 +7,7 @@ import (
 )
 
 // addressKeys are rejected anywhere in a Registrar API payload: ARF TS5 v1.3
-// [ARF TS5 §3.2.1] excludes WalletRelyingParty.physicalAddress from responses (the
+// [ARF TS5 v1.3 §3.2.1] excludes WalletRelyingParty.physicalAddress from responses (the
 // ARF TS5 JSON schema spells the LegalEntity field postalAddress — reject both).
 // Ingesting home/postal addresses would pull personal data into the
 // verifier pipeline (no attribute values in errors) — fail closed.

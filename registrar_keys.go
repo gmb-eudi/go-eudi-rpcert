@@ -22,7 +22,7 @@ type RegistrarKeys interface {
 }
 
 // PinnedRegistrarKeys is the config-driven pinning implementation: one
-// public key per registry base URL ([ARF TS5 §3.2.2] leaves key discovery to
+// public key per registry base URL ([ARF TS5 v1.3 §3.2.2] leaves key discovery to
 // deployment).
 type PinnedRegistrarKeys struct {
 	byURI map[string]crypto.PublicKey
