@@ -48,11 +48,11 @@ func (r *WRPRC) Verify(src trust.AnchorSource, clock func() time.Time) error {
 	switch r.Format {
 	case FormatJWT:
 		if _, _, err := eudicrypto.VerifyJWS(r.Raw, leaf.PublicKey); err != nil {
-			return fmt.Errorf("%w: %v", ErrSignature, err)
+			return fmt.Errorf("%w: %w", ErrSignature, err)
 		}
 	case FormatCWT:
 		if _, _, err := eudicrypto.VerifyCOSESign1(r.Raw, leaf.PublicKey); err != nil {
-			return fmt.Errorf("%w: %v", ErrSignature, err)
+			return fmt.Errorf("%w: %w", ErrSignature, err)
 		}
 	default:
 		return fmt.Errorf("%w: %q", ErrWRPRCFormat, r.Format)

@@ -59,12 +59,12 @@ func parseWRPRCCWT(raw []byte) (*WRPRC, error) {
 	}
 	var s coseSign1
 	if err := cborDec.Unmarshal(body, &s); err != nil {
-		return nil, fmt.Errorf("%w: not a COSE_Sign1 structure: %v", ErrWRPRCFormat, err)
+		return nil, fmt.Errorf("%w: not a COSE_Sign1 structure: %w", ErrWRPRCFormat, err)
 	}
 	protected := map[any]any{}
 	if len(s.Protected) > 0 {
 		if err := cborDec.Unmarshal(s.Protected, &protected); err != nil {
-			return nil, fmt.Errorf("%w: protected header: %v", ErrMalformed, err)
+			return nil, fmt.Errorf("%w: protected header: %w", ErrMalformed, err)
 		}
 	}
 	typ, _ := protected[coseHeaderTyp].(string)
@@ -82,7 +82,7 @@ func parseWRPRCCWT(raw []byte) (*WRPRC, error) {
 	for i, der := range rawChain {
 		certs, err := eudicrypto.ParseCertChain(der)
 		if err != nil {
-			return nil, fmt.Errorf("%w: x5chain[%d]: %v", ErrMalformed, i, err)
+			return nil, fmt.Errorf("%w: x5chain[%d]: %w", ErrMalformed, i, err)
 		}
 		chain = append(chain, certs...)
 	}
@@ -91,7 +91,7 @@ func parseWRPRCCWT(raw []byte) (*WRPRC, error) {
 	}
 	var claims map[any]any
 	if err := cborDec.Unmarshal(s.Payload, &claims); err != nil {
-		return nil, fmt.Errorf("%w: CWT payload: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: CWT payload: %w", ErrMalformed, err)
 	}
 	jsonPayload, err := cwtClaimsToJSON(claims)
 	if err != nil {

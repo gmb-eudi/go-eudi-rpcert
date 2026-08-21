@@ -147,7 +147,7 @@ func parseWRPRCJWT(raw []byte) (*WRPRC, error) {
 	}
 	headRaw, err := base64.RawURLEncoding.DecodeString(string(parts[0]))
 	if err != nil {
-		return nil, fmt.Errorf("%w: header segment: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: header segment: %w", ErrMalformed, err)
 	}
 	var head struct {
 		Typ string   `json:"typ"`
@@ -155,7 +155,7 @@ func parseWRPRCJWT(raw []byte) (*WRPRC, error) {
 		X5C []string `json:"x5c"`
 	}
 	if err := json.Unmarshal(headRaw, &head); err != nil {
-		return nil, fmt.Errorf("%w: header: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: header: %w", ErrMalformed, err)
 	}
 	if head.Typ != wrprcTypJWT {
 		return nil, fmt.Errorf("%w: typ %q, want %q", ErrWRPRCType, head.Typ, wrprcTypJWT)
@@ -170,17 +170,17 @@ func parseWRPRCJWT(raw []byte) (*WRPRC, error) {
 	for i, b64 := range head.X5C {
 		der, err := base64.StdEncoding.DecodeString(b64) // [RFC 7515 §4.1.6]
 		if err != nil {
-			return nil, fmt.Errorf("%w: x5c[%d]: %v", ErrMalformed, i, err)
+			return nil, fmt.Errorf("%w: x5c[%d]: %w", ErrMalformed, i, err)
 		}
 		certs, err := eudicrypto.ParseCertChain(der)
 		if err != nil {
-			return nil, fmt.Errorf("%w: x5c[%d]: %v", ErrMalformed, i, err)
+			return nil, fmt.Errorf("%w: x5c[%d]: %w", ErrMalformed, i, err)
 		}
 		chain = append(chain, certs...)
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(string(parts[1]))
 	if err != nil {
-		return nil, fmt.Errorf("%w: payload segment: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: payload segment: %w", ErrMalformed, err)
 	}
 	claims, err := decodeWRPRCClaims(payload)
 	if err != nil {
@@ -253,7 +253,7 @@ type intermediaryJSON struct {
 func decodeWRPRCClaims(payload []byte) (*wrprcClaims, error) {
 	var c wrprcClaims
 	if err := json.Unmarshal(payload, &c); err != nil {
-		return nil, fmt.Errorf("%w: payload: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: payload: %w", ErrMalformed, err)
 	}
 	return &c, nil
 }
