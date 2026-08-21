@@ -116,7 +116,7 @@ func LoadWRPAC(chain [][]byte) (*WRPAC, error) {
 	for i, raw := range chain {
 		cs, err := eudicrypto.ParseCertChain(raw)
 		if err != nil {
-			return nil, fmt.Errorf("%w: chain[%d]: %v", ErrMalformed, i, err)
+			return nil, fmt.Errorf("%w: chain[%d]: %w", ErrMalformed, i, err)
 		}
 		certs = append(certs, cs...)
 	}
@@ -216,7 +216,7 @@ func hasTelephoneOtherName(cert *x509.Certificate) (bool, error) {
 			var gn asn1.RawValue
 			data, err = asn1.Unmarshal(data, &gn)
 			if err != nil {
-				return false, fmt.Errorf("%w: GeneralName: %v", ErrMalformed, err)
+				return false, fmt.Errorf("%w: GeneralName: %w", ErrMalformed, err)
 			}
 			// otherName ::= [0] { type-id OBJECT IDENTIFIER, value [0] EXPLICIT ANY }
 			if gn.Class == asn1.ClassContextSpecific && gn.Tag == 0 && gn.IsCompound {

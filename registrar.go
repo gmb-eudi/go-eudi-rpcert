@@ -207,19 +207,19 @@ func (c *RegistrarClient) GetWRPByID(ctx context.Context, registryURI, identifie
 func (c *RegistrarClient) fetch(ctx context.Context, registryURI, path string, params url.Values) ([]byte, error) {
 	u, err := joinURL(registryURI, path)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: %w", ErrMalformed, err)
 	}
 	if len(params) > 0 {
 		u.RawQuery = params.Encode()
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrMalformed, err)
+		return nil, fmt.Errorf("%w: %w", ErrMalformed, err)
 	}
 	req.Header.Set("Accept", "application/jwt")
 	resp, err := c.doer.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrRegistrarUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrRegistrarUnavailable, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode == http.StatusNotFound {
@@ -230,7 +230,7 @@ func (c *RegistrarClient) fetch(ctx context.Context, registryURI, path string, p
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20)) // 8 MiB cap
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrRegistrarUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrRegistrarUnavailable, err)
 	}
 	return c.verifyResponse(registryURI, body)
 }
@@ -248,7 +248,7 @@ func (c *RegistrarClient) verifyResponse(registryURI string, token []byte) ([]by
 	}
 	payload, _, err := eudicrypto.VerifyJWS(token, key) // alg from key, never from the token
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrResponseSignature, err)
+		return nil, fmt.Errorf("%w: %w", ErrResponseSignature, err)
 	}
 	if err := c.checkFreshness(payload); err != nil {
 		return nil, err
@@ -264,7 +264,7 @@ func (c *RegistrarClient) checkFreshness(payload []byte) error {
 		Iat int64 `json:"iat"`
 	}
 	if err := json.Unmarshal(payload, &env); err != nil {
-		return fmt.Errorf("%w: %v", ErrMalformed, err)
+		return fmt.Errorf("%w: %w", ErrMalformed, err)
 	}
 	if env.Iat <= 0 {
 		return fmt.Errorf("%w: missing iat", ErrMalformed)
@@ -285,13 +285,13 @@ func jwsKID(token []byte) (string, error) {
 	}
 	raw, err := base64.RawURLEncoding.DecodeString(seg)
 	if err != nil {
-		return "", fmt.Errorf("%w: header segment: %v", ErrResponseSignature, err)
+		return "", fmt.Errorf("%w: header segment: %w", ErrResponseSignature, err)
 	}
 	var h struct {
 		Kid string `json:"kid"`
 	}
 	if err := json.Unmarshal(raw, &h); err != nil {
-		return "", fmt.Errorf("%w: header: %v", ErrResponseSignature, err)
+		return "", fmt.Errorf("%w: header: %w", ErrResponseSignature, err)
 	}
 	return h.Kid, nil
 }

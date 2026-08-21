@@ -94,7 +94,7 @@ func chainToAnchors(leaf *x509.Certificate, intermediates []*x509.Certificate, s
 		return nil
 	}
 	if lastErr != nil {
-		return fmt.Errorf("%w: %v", ErrNoTrustPath, lastErr)
+		return fmt.Errorf("%w: %w", ErrNoTrustPath, lastErr)
 	}
 	return fmt.Errorf("%w: no usable anchors", ErrNoTrustPath)
 }

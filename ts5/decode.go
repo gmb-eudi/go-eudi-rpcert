@@ -7,7 +7,7 @@ import (
 )
 
 // addressKeys are rejected anywhere in a Registrar API payload: ARF TS5 v1.3
-// [ARF TS5 §3.2.1] excludes WalletRelyingParty.physicalAddress from responses (the
+// [ARF TS5 v1.3 §3.2.1] excludes WalletRelyingParty.physicalAddress from responses (the
 // ARF TS5 JSON schema spells the LegalEntity field postalAddress — reject both).
 // Ingesting home/postal addresses would pull personal data into the
 // verifier pipeline (no attribute values in errors) — fail closed.
@@ -18,7 +18,7 @@ func rejectAddressFields(payload []byte) error {
 	dec.UseNumber()
 	var doc any
 	if err := dec.Decode(&doc); err != nil {
-		return fmt.Errorf("%w: %v", ErrDecode, err)
+		return fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	return walkForAddress(doc)
 }
@@ -53,7 +53,7 @@ func DecodeSignedWRPArray(payload []byte) (*SignedWRPArray, error) {
 	}
 	var env SignedWRPArray
 	if err := json.Unmarshal(payload, &env); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDecode, err)
+		return nil, fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	if err := checkEnvelope(env.Iss, env.Iat); err != nil {
 		return nil, err
@@ -75,14 +75,14 @@ func DecodeSignedWRP(payload []byte) (*SignedWRP, error) {
 		Data json.RawMessage `json:"data"`
 	}
 	if err := json.Unmarshal(payload, &probe); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDecode, err)
+		return nil, fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	if len(probe.Data) == 0 {
 		return nil, fmt.Errorf("%w: data", ErrEnvelope)
 	}
 	var env SignedWRP
 	if err := json.Unmarshal(payload, &env); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDecode, err)
+		return nil, fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	if err := checkEnvelope(env.Iss, env.Iat); err != nil {
 		return nil, err
@@ -106,14 +106,14 @@ func DecodeSignedIntendedUseCheckResult(payload []byte) (*SignedIntendedUseCheck
 		Data json.RawMessage `json:"data"`
 	}
 	if err := json.Unmarshal(payload, &probe); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDecode, err)
+		return nil, fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	if len(probe.Data) == 0 {
 		return nil, fmt.Errorf("%w: data", ErrEnvelope)
 	}
 	var env SignedIntendedUseCheckResult
 	if err := json.Unmarshal(payload, &env); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDecode, err)
+		return nil, fmt.Errorf("%w: %w", ErrDecode, err)
 	}
 	if err := checkEnvelope(env.Iss, env.Iat); err != nil {
 		return nil, err

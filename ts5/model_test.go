@@ -64,7 +64,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if len(wrp.SrvDescription) != 1 || len(wrp.SrvDescription[0]) != 2 || wrp.SrvDescription[0][1].Lang != "de" {
 		t.Errorf("srvDescription = %+v", wrp.SrvDescription)
 	}
-	// IntendedUse [ARF TS5 §2.4.3]
+	// IntendedUse [ARF TS5 v1.3 §2.4.3]
 	if len(wrp.IntendedUse) != 2 {
 		t.Fatalf("len(intendedUse) = %d, want 2", len(wrp.IntendedUse))
 	}
@@ -78,7 +78,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if len(iu.Credentials) != 2 {
 		t.Fatalf("len(credentials) = %d, want 2", len(iu.Credentials))
 	}
-	// Credential [ARF TS5 §2.4.4] + Claim [ARF TS5 §2.4.1]
+	// Credential [ARF TS5 v1.3 §2.4.4] + Claim [ARF TS5 v1.3 §2.4.1]
 	sd := iu.Credentials[0]
 	if sd.Format != "dc+sd-jwt" {
 		t.Errorf("format = %q", sd.Format)
@@ -95,7 +95,7 @@ func TestGoldenDecodeWRPPage1(t *testing.T) {
 	if wrp.IntendedUse[1].RevokedAt != "2026-06-01" {
 		t.Errorf("intendedUse[1].revokedAt = %q", wrp.IntendedUse[1].RevokedAt)
 	}
-	// usesIntermediary [ARF TS5 §2.1]
+	// usesIntermediary [ARF TS5 v1.3 §2.1]
 	if len(wrp.UsesIntermediary) != 1 {
 		t.Fatalf("len(usesIntermediary) = %d, want 1", len(wrp.UsesIntermediary))
 	}
@@ -266,7 +266,7 @@ func TestEnvelopeValidation(t *testing.T) {
 		{"missing_data", `{"iss":"x","iat":1}`, ts5.ErrEnvelope},
 		{"not_json", `<html>`, ts5.ErrDecode},
 		{"empty", ``, ts5.ErrDecode},
-		// [ARF TS5 §3.2.1]: responses exclude WalletRelyingParty.physicalAddress;
+		// [ARF TS5 v1.3 §3.2.1]: responses exclude WalletRelyingParty.physicalAddress;
 		// the JSON schema names the LegalEntity field postalAddress — both
 		// spellings are privacy-rejected before any struct field could hold them.
 		{"physicalAddress_present", `{"iss":"x","iat":1,"data":[{"physicalAddress":["street 1"],"isPSB":false,"isIntermediary":false}]}`, ts5.ErrAddressPresent},
