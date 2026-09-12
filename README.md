@@ -21,8 +21,8 @@ Framework-free: injectable HTTP doer and clock, typed errors, no logging.
 All JOSE/COSE/X.509 via github.com/gmb-eudi/go-eudi-crypto; trust anchors
 only via github.com/gmb-eudi/go-eudi-trust.
 
-Status: pre-v1 (not yet tagged/published — CI resolves sibling gmb-eudi
-modules once they are). Functionally, WP-07 is complete (T-07.1–T-07.9):
+Status: pre-v1. API frozen no earlier than OIDF conformance pass.
+Functionally, WP-07 is complete (T-07.1–T-07.9):
 
 - `ts5` data model — golden-decode + schema-drift tests + fuzz target
   (T-07.1).
